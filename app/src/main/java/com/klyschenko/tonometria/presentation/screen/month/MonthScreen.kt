@@ -1,4 +1,4 @@
-package com.klyschenko.tonometria.presentation.screens
+package com.klyschenko.tonometria.presentation.screen.month
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

@@ -1,4 +1,4 @@
-package com.klyschenko.tonometria.ui.theme
+package com.klyschenko.tonometria.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
