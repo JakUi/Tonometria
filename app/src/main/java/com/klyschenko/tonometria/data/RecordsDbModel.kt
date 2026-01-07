@@ -1,13 +1,16 @@
 package com.klyschenko.tonometria.data
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.klyschenko.tonometria.domain.entity.DayPart
 import java.time.Month
 
 
-@Entity(tableName = "records")
-data class RecordDbModel(
+@Entity(tableName = "records",
+    indices = [Index("recordId")]
+)
+data class RecordsDbModel(
     @PrimaryKey val recordId: Int,
     val year: Int,
     val month: Month,

@@ -11,10 +11,10 @@ import java.time.Month
 interface RecordsDao {
 
     @Query("SELECT * FROM records WHERE year==:year AND month==:month")
-    fun getAllMonthRecords(year: Int, month: Month): Flow<List<RecordDbModel>>
+    fun getAllMonthRecords(year: Int, month: Month): Flow<List<RecordsDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addNewRecord(recordDbModel: RecordDbModel)
+    suspend fun addNewRecord(recordsDbModel: RecordsDbModel)
 
     @Query("DELETE FROM records WHERE recordId == :recordId")
     fun deleteRecord(recordId: Int)
