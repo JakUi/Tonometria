@@ -14,5 +14,5 @@ interface RecordRepository {
 
     suspend fun deleteRecord(recordId: Int)
 
-    suspend fun addComment(recordId: Int)
+    suspend fun addCommentToRecord(recordId: Int)
 }
