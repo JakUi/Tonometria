@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.klyschenko.tonometria.domain.repository.ToUpdate
 import kotlinx.coroutines.flow.Flow
 import java.time.Month
 
@@ -39,11 +40,4 @@ interface RecordsDao {
 
     @Query("UPDATE records SET comment=:comment WHERE recordId==:recordId")
     suspend fun addCommentToRecord(recordId: Int, comment: String)
-}
-
-sealed class ToUpdate {
-    data class UpperPressure(val upperPressure: Int) : ToUpdate()
-    data class LowerPressure(val lowerPressure: Int) : ToUpdate()
-    data class Pulse(val pulse: Int) : ToUpdate()
-    data class Comment(val comment: String) : ToUpdate()
 }

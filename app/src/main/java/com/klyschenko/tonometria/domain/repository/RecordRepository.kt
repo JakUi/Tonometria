@@ -10,9 +10,16 @@ interface RecordRepository {
 
     suspend fun addNewRecord(record: Record)
 
-    suspend fun editRecord(higherPressure: Int?, lowePressure: Int?, pulse: Int?, comment: String?)
+    suspend fun editRecord(recordId: Int, toUpdate: ToUpdate)
 
     suspend fun deleteRecord(recordId: Int)
 
     suspend fun addCommentToRecord(recordId: Int, comment: String)
+}
+
+sealed class ToUpdate {
+    data class UpperPressure(val upperPressure: Int) : ToUpdate()
+    data class LowerPressure(val lowerPressure: Int) : ToUpdate()
+    data class Pulse(val pulse: Int) : ToUpdate()
+    data class Comment(val comment: String) : ToUpdate()
 }

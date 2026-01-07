@@ -5,8 +5,9 @@ import javax.inject.Inject
 
 class AddCommentToRecordUseCase @Inject constructor(
     private val recordRepository: RecordRepository,
-    private val recordId: Int
+    private val recordId: Int,
+    private val comment: String
 ) {
 
-    suspend operator fun invoke() = recordRepository.addCommentToRecord(recordId)
+    suspend operator fun invoke() = recordRepository.addCommentToRecord(recordId, comment)
 }
