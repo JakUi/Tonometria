@@ -4,8 +4,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.klyschenko.tonometria.domain.entity.DayPart
-import java.time.Month
-
 
 @Entity(tableName = "records",
     indices = [Index("recordId")]
@@ -13,7 +11,7 @@ import java.time.Month
 data class RecordsDbModel(
     @PrimaryKey val recordId: Int,
     val year: Int,
-    val month: Month,
+    val month: Int,
     val day: Int,
     val wroteAt: DayPart,
     val upperPressure: Int,

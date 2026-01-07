@@ -3,6 +3,7 @@
 package com.klyschenko.tonometria
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,18 +26,24 @@ import androidx.room.PrimaryKey
 import com.klyschenko.tonometria.data.RecordsDao
 import com.klyschenko.tonometria.data.RecordsDatabase
 import com.klyschenko.tonometria.data.RecordsDbModel
+import com.klyschenko.tonometria.data.repository.RecordsRepositoryImpl
 import com.klyschenko.tonometria.domain.entity.DayPart
+import com.klyschenko.tonometria.domain.entity.Record
+import com.klyschenko.tonometria.domain.repository.RecordsRepository
+import com.klyschenko.tonometria.domain.repository.ToUpdate
 import com.klyschenko.tonometria.presentation.screen.month.DayRow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.Month
 import javax.inject.Inject
+import kotlin.Int
+import kotlin.ranges.random
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var recordsDao: RecordsDao
+    lateinit var repository: RecordsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,29 +51,40 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
 
-//            @PrimaryKey val recordId: Int,
-//            val year: Int,
-//            val month: Month,
-//            val day: Int,
-//            val wroteAt: DayPart,
-//            val upperPressure: Int,
-//            val lowerPressure: Int,
-//            val pulse: Int,
-//            val comment: String
-
-            val record = RecordsDbModel(
-                1,
-                2026,
-                Month.JANUARY,
-                7,
-                DayPart.DAY,
-                120,
-                80,
-                71,
-                ""
+            val record = Record(
+                recordId = 1,
+                day = 7,
+                month = 1,
+                year = 2026,
+                upperPressure = 120,
+                lowerPressure = 80,
+                pulse = 65,
+                wroteAt = DayPart.DAY,
+                comment = "Works!"
             )
 
-            recordsDao.addNewRecord(record)
+            val record2 = Record(
+                recordId = 2,
+                day = 7,
+                month = 1,
+                year = 2026,
+                upperPressure = 121,
+                lowerPressure = 79,
+                pulse = 77,
+                wroteAt = DayPart.DAY,
+                comment = "Oo!"
+            )
+
+            repository.addNewRecord(record)
+            repository.editRecord(1, toUpdate = ToUpdate.Comment("Cool"))
+            repository.addNewRecord(record2)
+
+            lifecycleScope.launch {
+                repository.getAllMonthRecords(2026, 1)
+                    .collect { records ->
+                        Log.d("Debug", "size=${records.size} records=$records")
+                    }
+            }
         }
 
 //        setContent {

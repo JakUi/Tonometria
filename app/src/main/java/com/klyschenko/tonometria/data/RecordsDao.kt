@@ -6,13 +6,12 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.klyschenko.tonometria.domain.repository.ToUpdate
 import kotlinx.coroutines.flow.Flow
-import java.time.Month
 
 @Dao
 interface RecordsDao {
 
     @Query("SELECT * FROM records WHERE year==:year AND month==:month")
-    fun getAllMonthRecords(year: Int, month: Month): Flow<List<RecordsDbModel>>
+    fun getAllMonthRecords(year: Int, month: Int): Flow<List<RecordsDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addNewRecord(recordsDbModel: RecordsDbModel)

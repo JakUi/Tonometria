@@ -2,11 +2,10 @@ package com.klyschenko.tonometria.domain.repository
 
 import com.klyschenko.tonometria.domain.entity.Record
 import kotlinx.coroutines.flow.Flow
-import java.time.Month
 
 interface RecordsRepository {
 
-    fun getAllMonthRecords(year: Int, month: Month): Flow<List<Record>>
+    fun getAllMonthRecords(year: Int, month: Int): Flow<List<Record>>
 
     suspend fun addNewRecord(record: Record)
 

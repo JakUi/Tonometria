@@ -1,11 +1,9 @@
 package com.klyschenko.tonometria.domain.entity
 
-import java.time.Month
-
 data class Record(
     val recordId: Int = (0..999_999).random(),
-    val date: Int,
-    val month: Month,
+    val day: Int,
+    val month: Int,
     val year: Int = 2026,
     val upperPressure: Int,
     val lowerPressure: Int,
