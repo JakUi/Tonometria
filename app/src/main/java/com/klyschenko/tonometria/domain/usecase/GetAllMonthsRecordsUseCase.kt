@@ -1,15 +1,14 @@
 package com.klyschenko.tonometria.domain.usecase
 
-import android.util.Printer
-import com.klyschenko.tonometria.domain.repository.RecordRepository
+import com.klyschenko.tonometria.domain.repository.RecordsRepository
 import java.time.Month
 import javax.inject.Inject
 
 class GetAllMonthsRecordsUseCase @Inject constructor(
-    private val recordRepository: RecordRepository,
+    private val recordsRepository: RecordsRepository,
     private val year: Int,
     private val month: Month
 ) {
 
-    operator fun invoke() = recordRepository.getAllMonthRecords(year, month)
+    operator fun invoke() = recordsRepository.getAllMonthRecords(year, month)
 }

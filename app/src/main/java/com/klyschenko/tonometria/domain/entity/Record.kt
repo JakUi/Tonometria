@@ -6,7 +6,7 @@ data class Record(
     val recordId: Int = (0..999_999).random(),
     val date: Int,
     val month: Month,
-    val year: Int,
+    val year: Int = 2026,
     val upperPressure: Int,
     val lowerPressure: Int,
     val pulse: Int,

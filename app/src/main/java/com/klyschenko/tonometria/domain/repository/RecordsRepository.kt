@@ -4,7 +4,7 @@ import com.klyschenko.tonometria.domain.entity.Record
 import kotlinx.coroutines.flow.Flow
 import java.time.Month
 
-interface RecordRepository {
+interface RecordsRepository {
 
     fun getAllMonthRecords(year: Int, month: Month): Flow<List<Record>>
 
