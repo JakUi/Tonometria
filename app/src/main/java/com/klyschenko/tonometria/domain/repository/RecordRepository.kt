@@ -10,9 +10,9 @@ interface RecordRepository {
 
     suspend fun addNewRecord(record: Record)
 
-    suspend fun editRecord(record: Record)
+    suspend fun editRecord(higherPressure: Int?, lowePressure: Int?, pulse: Int?, comment: String?)
 
     suspend fun deleteRecord(recordId: Int)
 
-    suspend fun addCommentToRecord(recordId: Int)
+    suspend fun addCommentToRecord(recordId: Int, comment: String)
 }
