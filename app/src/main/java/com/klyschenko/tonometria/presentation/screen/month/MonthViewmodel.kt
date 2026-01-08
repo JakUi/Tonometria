@@ -12,9 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,37 +30,22 @@ class MonthViewmodel @Inject constructor(
     private val selectedYear = savedStateHandle.getStateFlow(KEY_YEAR, 2026)
     private val selectedMonth = savedStateHandle.getStateFlow(KEY_MONTH, 1)
 
-    private val _state = MutableStateFlow(
-        listOf<Record>(
-            Record(
-                recordId = 4,
-                day = 8,
-                month = 1,
-                year = 2026,
-                upperPressure = 121,
-                lowerPressure = 79,
-                pulse = 77,
-                wroteAt = DayPart.EVENING,
-                comment = "!!!"
-            )
-        )
-    )
-
+    private val _state = MutableStateFlow<List<Record>>(emptyList())
     val state = _state.asStateFlow()
 
-    private fun getRecords() { // Нужно править тут. Сейчас работает не верно т.к. в State добавляется только последний параметр.
-        getAllMonthsRecordsUseCase(month = selectedMonth.value, year = selectedYear.value)
-            .onEach { _ ->
-                _state.update {
-                    previousState ->
-                    val newState = previousState
-                    newState
-                }
-            }.launchIn(viewModelScope)
+    fun loadRecords() {
+        viewModelScope.launch {
+            getAllMonthsRecordsUseCase(
+                year = selectedYear.value,
+                month = selectedMonth.value
+            ).collect { list ->
+                _state.value = list
+            }
+        }
     }
 
     init {
-        getRecords()
+        loadRecords()
     }
 
     fun onMonthSelected(month: Int) {
