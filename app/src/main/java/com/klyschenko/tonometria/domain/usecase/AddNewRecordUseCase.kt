@@ -6,8 +6,7 @@ import javax.inject.Inject
 
 class AddNewRecordUseCase @Inject constructor(
     private val recordsRepository: RecordsRepository,
-    private val record: Record
 ) {
 
-    suspend operator fun invoke() = recordsRepository.addNewRecord(record)
+    suspend operator fun invoke(record: Record) = recordsRepository.addNewRecord(record)
 }

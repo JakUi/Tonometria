@@ -6,9 +6,7 @@ import javax.inject.Inject
 
 class EditRecordUseCase @Inject constructor(
     private val recordsRepository: RecordsRepository,
-    private val recordId: Int,
-    private val toUpdate: ToUpdate
 ) {
 
-    suspend operator fun invoke() = recordsRepository.editRecord(recordId, toUpdate)
+    suspend operator fun invoke(recordId: Int, toUpdate: ToUpdate) = recordsRepository.editRecord(recordId, toUpdate)
 }

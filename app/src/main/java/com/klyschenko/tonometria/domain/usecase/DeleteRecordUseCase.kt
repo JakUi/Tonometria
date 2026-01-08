@@ -5,8 +5,7 @@ import javax.inject.Inject
 
 class DeleteRecordUseCase @Inject constructor(
     private val recordsRepository: RecordsRepository,
-    private val recordId: Int
 ) {
 
-    suspend operator fun invoke() = recordsRepository.deleteRecord(recordId)
+    suspend operator fun invoke(recordId: Int) = recordsRepository.deleteRecord(recordId)
 }

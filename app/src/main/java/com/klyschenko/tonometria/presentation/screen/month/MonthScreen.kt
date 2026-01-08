@@ -1,5 +1,6 @@
 package com.klyschenko.tonometria.presentation.screen.month
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -18,18 +19,23 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 
 @Preview
 @Composable
 fun DayRow(
     modifier: Modifier = Modifier,
-    index: Int = 15
+    index: Int = 15,
+    viewModel: MonthViewmodel = hiltViewModel()
 ) {
     val rowShape = RoundedCornerShape(8.dp)
     Column(
@@ -45,7 +51,6 @@ fun DayRow(
                 )
                 .padding(end = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-//            horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -76,6 +81,11 @@ fun DayRow(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
                 ) {
+                    val _state by viewModel.state.collectAsStateWithLifecycle()
+
+                    LaunchedEffect(_state) {
+                        Log.d("Debug", "state=$_state")
+                    }
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
