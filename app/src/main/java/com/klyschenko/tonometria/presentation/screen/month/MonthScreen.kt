@@ -38,6 +38,8 @@ fun DayRow(
     viewModel: MonthViewmodel = hiltViewModel()
 ) {
     val rowShape = RoundedCornerShape(8.dp)
+    val _state by viewModel.state.collectAsStateWithLifecycle()
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -81,7 +83,6 @@ fun DayRow(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
                 ) {
-                    val _state by viewModel.state.collectAsStateWithLifecycle()
 
                     LaunchedEffect(_state) {
                         Log.d("Debug", "state=$_state")

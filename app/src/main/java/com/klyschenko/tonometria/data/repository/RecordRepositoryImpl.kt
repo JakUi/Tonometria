@@ -1,23 +1,50 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.klyschenko.tonometria.data.repository
 
 import com.klyschenko.tonometria.data.RecordsDao
-import com.klyschenko.tonometria.domain.entity.Record
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
 import com.klyschenko.tonometria.domain.repository.ToUpdate
-import com.klyschenko.tonometria.data.mapper.toEntities
 import com.klyschenko.tonometria.data.mapper.toDbModel
+import com.klyschenko.tonometria.data.mapper.toPressureData
+import com.klyschenko.tonometria.domain.entity.PressureData
+import com.klyschenko.tonometria.domain.entity.Record
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RecordsRepositoryImpl @Inject constructor(
     private val recordsDao: RecordsDao
 ) : RecordsRepository {
+
     override fun getAllMonthRecords(
         year: Int,
         month: Int
-    ): Flow<List<Record>> {
-        return recordsDao.getAllMonthRecords(year, month).map { it.toEntities() }
+    ): Flow<Map<Int, List<PressureData>>> {
+
+        val byDay: Flow<Map<Int, List<PressureData>>> =
+            recordsDao.getAllDays(year, month)               // Flow<List<Int>>
+                .flatMapLatest { days ->
+                    if (days.isEmpty()) {
+                        flowOf(emptyMap())
+                    } else {
+                        combine(
+                            days.map { day ->
+                                recordsDao.getDayRecords(year, month, day)   // Flow<List<PressureDataDbModel>>
+                                    .map { dbList -> dbList.toPressureData() } // List<PressureData>
+                                    .map { list -> day to list }               // Pair<Int, List<PressureData>>
+                            }
+                        ) { pairs ->
+                            pairs.toMap()
+                        }
+                    }
+                }
+
+        return byDay
     }
 
     override suspend fun addNewRecord(record: Record) {

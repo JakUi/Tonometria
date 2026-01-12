@@ -9,7 +9,7 @@ import com.klyschenko.tonometria.domain.entity.DayPart
     indices = [Index("recordId")]
 )
 data class RecordsDbModel(
-    @PrimaryKey val recordId: Int,
+    @PrimaryKey(autoGenerate = true) val recordId: Int = 0,
     val year: Int,
     val month: Int,
     val day: Int,
@@ -17,5 +17,12 @@ data class RecordsDbModel(
     val upperPressure: Int,
     val lowerPressure: Int,
     val pulse: Int,
-    val comment: String
+    val comment: String?
+)
+
+data class PressureDataDbModel(
+    val upperPressure: Int,
+    val lowerPressure: Int,
+    val pulse: Int,
+    val comment: String?
 )

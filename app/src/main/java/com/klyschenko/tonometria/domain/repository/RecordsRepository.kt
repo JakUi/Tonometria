@@ -1,11 +1,12 @@
 package com.klyschenko.tonometria.domain.repository
 
+import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.entity.Record
 import kotlinx.coroutines.flow.Flow
 
 interface RecordsRepository {
 
-    fun getAllMonthRecords(year: Int, month: Int): Flow<List<Record>>
+    fun getAllMonthRecords(year: Int, month: Int): Flow<Map<Int, List<PressureData>>>
 
     suspend fun addNewRecord(record: Record)
 

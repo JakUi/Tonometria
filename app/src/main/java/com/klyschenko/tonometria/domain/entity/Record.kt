@@ -1,13 +1,16 @@
 package com.klyschenko.tonometria.domain.entity
 
-data class Record(
-    val recordId: Int = (0..999_999).random(),
-    val day: Int,
-    val month: Int,
-    val year: Int = 2026,
+data class PressureData(
     val upperPressure: Int,
     val lowerPressure: Int,
     val pulse: Int,
-    val wroteAt: DayPart,
     val comment: String?
+)
+
+data class Record(
+    val year: Int,
+    val month: Int,
+    val day: Int,
+    val wroteAt: DayPart,
+    val data: PressureData
 )

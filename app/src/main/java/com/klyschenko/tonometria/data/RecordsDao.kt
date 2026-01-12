@@ -10,23 +10,32 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RecordsDao {
 
-    @Query("SELECT * FROM records WHERE year==:year AND month==:month")
+    @Query("SELECT * FROM records WHERE year=:year AND month=:month")
     fun getAllMonthRecords(year: Int, month: Int): Flow<List<RecordsDbModel>>
+
+    @Query("SELECT DISTINCT day FROM records WHERE year=:year AND month=:month ORDER BY day")
+    fun getAllDays(year: Int, month: Int): Flow<List<Int>>
+
+    @Query("SELECT upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
+    fun getDayRecords(year: Int, month: Int, day: Int): Flow<List<PressureDataDbModel>>
+
+    @Query("SELECT COUNT(*) FROM records WHERE year=:year AND month=:month")
+    suspend fun countMonth(year: Int, month: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addNewRecord(recordsDbModel: RecordsDbModel)
 
-    @Query("DELETE FROM records WHERE recordId == :recordId")
-    fun deleteRecord(recordId: Int)
+    @Query("DELETE FROM records WHERE recordId=:recordId")
+    suspend fun deleteRecord(recordId: Int)
 
-    @Query("UPDATE records SET upperPressure=:upperPressure WHERE recordId==:recordId")
-    fun updateUpperPressure(recordId: Int, upperPressure: Int)
+    @Query("UPDATE records SET upperPressure=:upperPressure WHERE recordId=:recordId")
+    suspend fun updateUpperPressure(recordId: Int, upperPressure: Int)
 
-    @Query("UPDATE records SET lowerPressure=:lowerPressure WHERE recordId==:recordId")
-    fun updateLowerPressure(recordId: Int, lowerPressure: Int)
+    @Query("UPDATE records SET lowerPressure=:lowerPressure WHERE recordId=:recordId")
+    suspend fun updateLowerPressure(recordId: Int, lowerPressure: Int)
 
-    @Query("UPDATE records SET pulse=:pulse WHERE recordId==:recordId")
-    fun updatePulse(recordId: Int, pulse: Int)
+    @Query("UPDATE records SET pulse=:pulse WHERE recordId=:recordId")
+    suspend fun updatePulse(recordId: Int, pulse: Int)
 
     suspend fun editRecord(recordId: Int, toUpdate: ToUpdate) {
         when(toUpdate) {
@@ -37,6 +46,6 @@ interface RecordsDao {
         }
     }
 
-    @Query("UPDATE records SET comment=:comment WHERE recordId==:recordId")
+    @Query("UPDATE records SET comment=:comment WHERE recordId=:recordId")
     suspend fun addCommentToRecord(recordId: Int, comment: String)
 }
