@@ -1,23 +1,29 @@
-package com.klyschenko.tonometria.data
+package com.klyschenko.tonometria.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.klyschenko.tonometria.data.db.model.DayDataDbModel
+import com.klyschenko.tonometria.data.db.entity.RecordsDbModel
 import com.klyschenko.tonometria.domain.repository.ToUpdate
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecordsDao {
 
-    @Query("SELECT * FROM records WHERE year=:year AND month=:month")
-    fun getAllMonthRecords(year: Int, month: Int): Flow<List<RecordsDbModel>>
+//    @Query("SELECT * FROM records WHERE year=:year AND month=:month")
+//    fun getAllMonthRecords(year: Int, month: Int): Flow<List<RecordsDbModel>>
 
     @Query("SELECT DISTINCT day FROM records WHERE year=:year AND month=:month ORDER BY day")
     fun getAllDays(year: Int, month: Int): Flow<List<Int>>
 
-    @Query("SELECT wroteAt, upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
-    fun getDayRecords(year: Int, month: Int, day: Int): Flow<List<PressureDataDbModel>>
+    // Старое решение
+//    @Query("SELECT wroteAt, upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
+//    fun getDayRecords(year: Int, month: Int, day: Int): Flow<List<PressureDataDbModel>>
+
+    @Query("SELECT day, wroteAt, upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
+    fun getDayRecords(year: Int, month: Int, day: Int): Flow<List<DayDataDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addNewRecord(recordsDbModel: RecordsDbModel)

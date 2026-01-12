@@ -2,7 +2,7 @@ package com.klyschenko.tonometria.di
 
 import android.content.Context
 import androidx.room.Room
-import com.klyschenko.tonometria.data.RecordsDao
+import com.klyschenko.tonometria.data.db.dao.RecordsDao
 import com.klyschenko.tonometria.data.RecordsDatabase
 import com.klyschenko.tonometria.data.repository.RecordsRepositoryImpl
 import com.klyschenko.tonometria.domain.repository.RecordsRepository

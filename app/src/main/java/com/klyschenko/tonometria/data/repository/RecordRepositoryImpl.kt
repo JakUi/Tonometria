@@ -2,7 +2,7 @@
 
 package com.klyschenko.tonometria.data.repository
 
-import com.klyschenko.tonometria.data.RecordsDao
+import com.klyschenko.tonometria.data.db.dao.RecordsDao
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
 import com.klyschenko.tonometria.domain.repository.ToUpdate
 import com.klyschenko.tonometria.data.mapper.toDbModel
@@ -27,16 +27,16 @@ class RecordsRepositoryImpl @Inject constructor(
     ): Flow<Map<Int, List<PressureData>>> {
 
         val byDay: Flow<Map<Int, List<PressureData>>> =
-            recordsDao.getAllDays(year, month)               // Flow<List<Int>>
+            recordsDao.getAllDays(year, month)
                 .flatMapLatest { days ->
                     if (days.isEmpty()) {
                         flowOf(emptyMap())
                     } else {
                         combine(
                             days.map { day ->
-                                recordsDao.getDayRecords(year, month, day)   // Flow<List<PressureDataDbModel>>
-                                    .map { dbList -> dbList.toPressureData() } // List<PressureData>
-                                    .map { list -> day to list }               // Pair<Int, List<PressureData>>
+                                recordsDao.getDayRecords(year, month, day)
+                                    .map { dbList -> dbList.toPressureData() }
+                                    .map { list -> day to list }
                             }
                         ) { pairs ->
                             pairs.toMap()

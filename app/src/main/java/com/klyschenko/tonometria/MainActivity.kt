@@ -3,7 +3,6 @@
 package com.klyschenko.tonometria
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,7 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
-import com.klyschenko.tonometria.domain.repository.ToUpdate
+import com.klyschenko.tonometria.domain.entity.Record
 import com.klyschenko.tonometria.presentation.screen.month.DayRow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,33 +41,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         lifecycleScope.launch {
-
-            val record = com.klyschenko.tonometria.domain.entity.Record(
-                day = 7,
+//
+            val record = Record(
+                day = 11,
                 month = 1,
                 year = 2026,
-                wroteAt = DayPart.DAY,
-                data = PressureData(120, 80, 67, "Added")
+                wroteAt = DayPart.EVENING,
+                data = PressureData(120, 80, 67, "")
             )
-
-            val record2 = com.klyschenko.tonometria.domain.entity.Record(
-                day = 7,
+//
+            val record2 = Record(
+                day = 12,
                 month = 1,
                 year = 2026,
                 wroteAt = DayPart.DAY,
                 data = PressureData(118, 76, 64, "Second")
             )
-
+//
+//            repository.addNewRecord(record)
+//            repository.editRecord(1, toUpdate = ToUpdate.Comment("Cool"))
             repository.addNewRecord(record)
-            repository.editRecord(1, toUpdate = ToUpdate.Comment("Cool"))
             repository.addNewRecord(record2)
 
-            lifecycleScope.launch {
-                repository.getAllMonthRecords(2026, 1)
-                    .collect { records ->
-                        Log.d("Debug", "size=${records.size} records=$records")
-                    }
-            }
         }
 
         setContent {

@@ -1,4 +1,4 @@
-package com.klyschenko.tonometria.data
+package com.klyschenko.tonometria.data.db.entity
 
 import androidx.room.Entity
 import androidx.room.Index
@@ -14,13 +14,6 @@ data class RecordsDbModel(
     val month: Int,
     val day: Int,
     val wroteAt: DayPart,
-    val upperPressure: Int,
-    val lowerPressure: Int,
-    val pulse: Int,
-    val comment: String?
-)
-
-data class PressureDataDbModel(
     val upperPressure: Int,
     val lowerPressure: Int,
     val pulse: Int,
