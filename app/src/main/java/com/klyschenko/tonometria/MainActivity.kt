@@ -25,6 +25,7 @@ import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
 import com.klyschenko.tonometria.domain.entity.Record
+import com.klyschenko.tonometria.domain.repository.ToUpdate
 import com.klyschenko.tonometria.presentation.screen.month.DayRow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -43,10 +44,10 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
 //
             val record = Record(
-                day = 11,
+                day = 12,
                 month = 1,
                 year = 2026,
-                wroteAt = DayPart.EVENING,
+                wroteAt = DayPart.MORNING,
                 data = PressureData(120, 80, 67, "")
             )
 //
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
 //            repository.editRecord(1, toUpdate = ToUpdate.Comment("Cool"))
             repository.addNewRecord(record)
             repository.addNewRecord(record2)
-
+            repository.editRecord(1, toUpdate = ToUpdate.Comment("Cool"))
         }
 
         setContent {

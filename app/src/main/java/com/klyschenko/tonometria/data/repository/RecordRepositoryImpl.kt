@@ -3,17 +3,16 @@
 package com.klyschenko.tonometria.data.repository
 
 import com.klyschenko.tonometria.data.db.dao.RecordsDao
+import com.klyschenko.tonometria.data.mapper.toDayDataEntity
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
 import com.klyschenko.tonometria.domain.repository.ToUpdate
 import com.klyschenko.tonometria.data.mapper.toDbModel
-import com.klyschenko.tonometria.data.mapper.toPressureData
-import com.klyschenko.tonometria.domain.entity.PressureData
+import com.klyschenko.tonometria.domain.entity.DayData
 import com.klyschenko.tonometria.domain.entity.Record
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -24,23 +23,19 @@ class RecordsRepositoryImpl @Inject constructor(
     override fun getAllMonthRecords(
         year: Int,
         month: Int
-    ): Flow<Map<Int, List<PressureData>>> {
+    ): Flow<Map<Int, List<DayData>>> {
 
-        val byDay: Flow<Map<Int, List<PressureData>>> =
+        val byDay: Flow<Map<Int, List<DayData>>> =
             recordsDao.getAllDays(year, month)
                 .flatMapLatest { days ->
-                    if (days.isEmpty()) {
-                        flowOf(emptyMap())
-                    } else {
-                        combine(
-                            days.map { day ->
-                                recordsDao.getDayRecords(year, month, day)
-                                    .map { dbList -> dbList.toPressureData() }
-                                    .map { list -> day to list }
-                            }
-                        ) { pairs ->
-                            pairs.toMap()
+                    combine(
+                        days.map { day ->
+                            recordsDao.getDayRecords(year, month, day)
+                                .map { dbList -> dbList.toDayDataEntity() }
+                                .map { list -> day to list }
                         }
+                    ) { pairs ->
+                        pairs.toMap()
                     }
                 }
 

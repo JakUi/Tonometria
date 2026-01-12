@@ -1,12 +1,11 @@
 package com.klyschenko.tonometria.data.mapper
 
+import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.data.db.model.DayDataDbModel
 import com.klyschenko.tonometria.data.db.entity.RecordsDbModel
 import com.klyschenko.tonometria.data.db.model.PressureDataDbModel
 import com.klyschenko.tonometria.domain.entity.DayData
-import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.entity.Record
-import kotlin.Int
 
 //fun List<RecordsDbModel>.toEntities(): List<Record> {
 //    return map {
@@ -33,13 +32,17 @@ fun Record.toDbModel(): RecordsDbModel {
     )
 }
 
-fun List<DayDataDbModel>.toPressureData(): List<PressureData> {
+fun List<DayDataDbModel>.toDayDataEntity(): List<DayData> {
     return map { dayDataDbModel ->
-        PressureData(
-            upperPressure = dayDataDbModel.data.upperPressure,
-            lowerPressure = dayDataDbModel.data.lowerPressure,
-            pulse = dayDataDbModel.data.pulse,
-            comment = dayDataDbModel.data.comment
+        DayData(
+            day = dayDataDbModel.day,
+            wroteAt = dayDataDbModel.wroteAt,
+            data = PressureData(
+                upperPressure = dayDataDbModel.data.upperPressure,
+                lowerPressure = dayDataDbModel.data.lowerPressure,
+                pulse = dayDataDbModel.data.pulse,
+                comment = dayDataDbModel.data.comment
+            )
         )
     }
 }
@@ -50,11 +53,4 @@ fun PressureDataDbModel.toEntity(): PressureData =
         lowerPressure = lowerPressure,
         pulse = pulse,
         comment = comment
-    )
-
-fun DayDataDbModel.toEntityDayData(year: Int, month: Int): DayData =
-    DayData(
-        day = day,
-        wroteAt = wroteAt,
-        data = data.toEntity()
     )

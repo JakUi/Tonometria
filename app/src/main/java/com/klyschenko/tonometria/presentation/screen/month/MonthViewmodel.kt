@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.klyschenko.tonometria.domain.entity.DayData
 import com.klyschenko.tonometria.domain.entity.DayPart
-import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.usecase.GetAllMonthsRecordsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +31,7 @@ class MonthViewmodel @Inject constructor(
     private val selectedYear = savedStateHandle.getStateFlow(KEY_YEAR, 2026)
     private val selectedMonth = savedStateHandle.getStateFlow(KEY_MONTH, 1)
 
-    private val _state = MutableStateFlow<Map<Int, List<PressureData>>>(mapOf())
+    private val _state = MutableStateFlow<Map<Int, List<DayData>>>(mapOf())
     val state = _state.asStateFlow()
 
     fun loadRecords() {
