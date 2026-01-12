@@ -16,11 +16,8 @@ interface RecordsDao {
     @Query("SELECT DISTINCT day FROM records WHERE year=:year AND month=:month ORDER BY day")
     fun getAllDays(year: Int, month: Int): Flow<List<Int>>
 
-    @Query("SELECT upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
+    @Query("SELECT wroteAt, upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
     fun getDayRecords(year: Int, month: Int, day: Int): Flow<List<PressureDataDbModel>>
-
-    @Query("SELECT COUNT(*) FROM records WHERE year=:year AND month=:month")
-    suspend fun countMonth(year: Int, month: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addNewRecord(recordsDbModel: RecordsDbModel)
