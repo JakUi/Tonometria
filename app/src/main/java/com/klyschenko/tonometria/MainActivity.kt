@@ -20,51 +20,16 @@ import androidx.compose.ui.unit.dp
 import com.klyschenko.tonometria.presentation.ui.theme.TonometriaTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.lifecycle.lifecycleScope
-import com.klyschenko.tonometria.domain.entity.DayPart
-import com.klyschenko.tonometria.domain.entity.PressureData
-import com.klyschenko.tonometria.domain.repository.RecordsRepository
-import com.klyschenko.tonometria.domain.entity.Record
-import com.klyschenko.tonometria.domain.repository.ToUpdate
 import com.klyschenko.tonometria.presentation.screen.month.DayRow
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var repository: RecordsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        lifecycleScope.launch {
-//
-            val record = Record(
-                day = 12,
-                month = 1,
-                year = 2026,
-                wroteAt = DayPart.MORNING,
-                data = PressureData(120, 80, 67, "")
-            )
-//
-            val record2 = Record(
-                day = 12,
-                month = 1,
-                year = 2026,
-                wroteAt = DayPart.DAY,
-                data = PressureData(118, 76, 64, "Second")
-            )
-//
-//            repository.addNewRecord(record)
-//            repository.editRecord(1, toUpdate = ToUpdate.Comment("Cool"))
-            repository.addNewRecord(record)
-            repository.addNewRecord(record2)
-            repository.editRecord(1, toUpdate = ToUpdate.Comment("Cool"))
-        }
 
         setContent {
             TonometriaTheme {

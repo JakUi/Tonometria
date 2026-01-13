@@ -35,7 +35,6 @@ fun Record.toDbModel(): RecordsDbModel {
 fun List<DayDataDbModel>.toDayDataEntity(): List<DayData> {
     return map { dayDataDbModel ->
         DayData(
-            day = dayDataDbModel.day,
             wroteAt = dayDataDbModel.wroteAt,
             data = PressureData(
                 upperPressure = dayDataDbModel.data.upperPressure,

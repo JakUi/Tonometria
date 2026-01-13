@@ -6,8 +6,12 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.klyschenko.tonometria.domain.entity.DayData
 import com.klyschenko.tonometria.domain.entity.DayPart
+import com.klyschenko.tonometria.domain.entity.PressureData
+import com.klyschenko.tonometria.domain.entity.Record
+import com.klyschenko.tonometria.domain.repository.ToUpdate
+import com.klyschenko.tonometria.domain.usecase.AddNewRecordUseCase
+import com.klyschenko.tonometria.domain.usecase.EditRecordUseCase
 import com.klyschenko.tonometria.domain.usecase.GetAllMonthsRecordsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +24,11 @@ import javax.inject.Inject
 @HiltViewModel
 class MonthViewmodel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getAllMonthsRecordsUseCase: GetAllMonthsRecordsUseCase
+    private val getAllMonthsRecordsUseCase: GetAllMonthsRecordsUseCase,
+
+    // для тестов. Удалить после релиза
+    private val addNewRecordUseCase: AddNewRecordUseCase,
+    private val editRecordUseCase: EditRecordUseCase
 ) : ViewModel() {
 
     companion object {
@@ -31,22 +39,49 @@ class MonthViewmodel @Inject constructor(
     private val selectedYear = savedStateHandle.getStateFlow(KEY_YEAR, 2026)
     private val selectedMonth = savedStateHandle.getStateFlow(KEY_MONTH, 1)
 
-    private val _state = MutableStateFlow<Map<Int, List<DayData>>>(mapOf())
+    private val _state =
+        MutableStateFlow<Map<Int, Map<DayPart, List<PressureData>>>>(emptyMap())
     val state = _state.asStateFlow()
+
+
+    fun forTestAddRecordsToDB() {
+        val record = Record(
+            day = 12,
+            month = 1,
+            year = 2026,
+            wroteAt = DayPart.MORNING,
+            data = PressureData(120, 80, 67, "")
+        )
+
+        val record2 = Record(
+            day = 12,
+            month = 1,
+            year = 2026,
+            wroteAt = DayPart.DAY,
+            data = PressureData(118, 76, 64, "Second")
+        )
+
+        viewModelScope.launch {
+            addNewRecordUseCase(record)
+            addNewRecordUseCase(record2)
+            editRecordUseCase(1, toUpdate = ToUpdate.Comment("Cool"))
+        }
+    }
 
     fun loadRecords() {
         viewModelScope.launch {
             getAllMonthsRecordsUseCase(
                 year = selectedYear.value,
                 month = selectedMonth.value
-            ).collect { list ->
-                _state.value = list
+            ).collect { map ->
+                _state.value = map
                 Log.d("Debug2", "state=${_state.value}")
             }
         }
     }
 
     init {
+//        forTestAddRecordsToDB()
         loadRecords()
     }
 
