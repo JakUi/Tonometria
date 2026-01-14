@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.klyschenko.tonometria.data.db.model.DayDataDbModel
 import com.klyschenko.tonometria.data.db.entity.RecordsDbModel
+import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.repository.ToUpdate
 import kotlinx.coroutines.flow.Flow
 
@@ -17,6 +18,9 @@ interface RecordsDao {
 
     @Query("SELECT day, wroteAt, upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
     fun getDayRecords(year: Int, month: Int, day: Int): Flow<List<DayDataDbModel>>
+
+    @Query("SELECT recordId FROM records WHERE year=:year AND month=:month AND day=:day AND wroteAt=:wroteAt")
+    fun getRecordId(year: Int, month: Int, day: Int, wroteAt: DayPart): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addNewRecord(recordsDbModel: RecordsDbModel)

@@ -11,11 +11,11 @@ interface RecordsRepository {
 
     suspend fun addNewRecord(record: Record)
 
-    suspend fun editRecord(recordId: Int, toUpdate: ToUpdate)
+    suspend fun editRecord(year: Int, month: Int, day: Int, wroteAt: DayPart, toUpdate: ToUpdate)
 
-    suspend fun deleteRecord(recordId: Int)
+    suspend fun deleteRecord(year: Int, month: Int, day: Int, wroteAt: DayPart)
 
-    suspend fun addCommentToRecord(recordId: Int, comment: String)
+    suspend fun addCommentToRecord(year: Int, month: Int, day: Int, wroteAt: DayPart, comment: String)
 }
 
 sealed class ToUpdate {

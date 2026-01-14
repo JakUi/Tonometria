@@ -58,17 +58,34 @@ class RecordsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun editRecord(
-        recordId: Int,
+        year: Int,
+        month: Int,
+        day: Int,
+        wroteAt: DayPart,
         toUpdate: ToUpdate
     ) {
+        val recordId: Int = recordsDao.getRecordId(year, month, day, wroteAt)
         recordsDao.editRecord(recordId, toUpdate)
     }
 
-    override suspend fun deleteRecord(recordId: Int) {
+    override suspend fun deleteRecord(
+        year: Int,
+        month: Int,
+        day: Int,
+        wroteAt: DayPart
+    ) {
+        val recordId: Int = recordsDao.getRecordId(year, month, day, wroteAt)
         recordsDao.deleteRecord(recordId)
     }
 
-    override suspend fun addCommentToRecord(recordId: Int, comment: String) {
+    override suspend fun addCommentToRecord(
+        year: Int,
+        month: Int,
+        day: Int,
+        wroteAt: DayPart,
+        comment: String
+    ) {
+        val recordId: Int = recordsDao.getRecordId(year, month, day, wroteAt)
         recordsDao.addCommentToRecord(recordId, comment)
     }
 }
