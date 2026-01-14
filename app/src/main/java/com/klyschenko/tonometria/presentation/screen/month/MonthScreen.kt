@@ -75,21 +75,21 @@ fun DayRow(
             val morningData = state.value[index]?.get(DayPart.MORNING)
             val dayData = state.value[index]?.get(DayPart.DAY)
             val eveningData = state.value[index]?.get(DayPart.EVENING)
-//            Log.d("Data", "$index morning data ${getData(morningData, DataType.UPPER)}")
-//            Log.d("Data", "$index day data ${getData(dayData, DataType.UPPER)}")
-//            Log.d("Data", "$index evening data ${getData(eveningData, DataType.UPPER)}")
             Cell(
+                modifier = Modifier.weight(1f),
                 upperPressure = morningData.valueOf(DataType.UPPER),
                 lowerPressure = morningData.valueOf(DataType.LOWER),
                 pulse = morningData.valueOf(DataType.PULSE)
 
             )
             Cell(
+                modifier = Modifier.weight(1f),
                 upperPressure = dayData.valueOf(DataType.UPPER),
                 lowerPressure = dayData.valueOf(DataType.LOWER),
                 pulse = dayData.valueOf(DataType.PULSE)
             )
             Cell(
+                modifier = Modifier.weight(1f),
                 upperPressure = eveningData.valueOf(DataType.UPPER),
                 lowerPressure = eveningData.valueOf(DataType.LOWER),
                 pulse = eveningData.valueOf(DataType.PULSE)
@@ -97,83 +97,6 @@ fun DayRow(
         }
     }
 }
-
-//val morningData = state[12]?.get(DayPart.MORNING)
-//val dayData = state[12]?.get(DayPart.DAY)
-//val eveningData = state[12]?.get(DayPart.EVENING)
-
-//@Composable
-//fun Morning(
-//    modifier: Modifier = Modifier,
-//    upperPressure: String,
-//    lowerPressure: String,
-//    pulse: String
-//) {
-//    Cell(
-//        modifier = modifier,
-//        upperPressure = upperPressure,
-//        lowerPressure = lowerPressure,
-//        pulse = pulse
-//    )
-//}
-
-//@Composable
-//fun Cell(
-//    modifier: Modifier = Modifier,
-//    state: Map<Int, Map<DayPart, List<PressureData>>>
-//) {
-//
-//    Card(
-//        modifier = modifier,
-//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-//        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.surface
-//        ),
-//    ) {
-//
-//        LaunchedEffect(state) {
-//            Log.d("Debug", "state=${state.keys}")
-//        }
-//        Box(
-//            modifier = Modifier.fillMaxSize(),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                Text(
-//                    modifier = Modifier
-//                        .padding(4.dp),
-//                    text = morningData?.get(0)?.upperPressure.toString(),
-//                    fontSize = 12.sp
-//                )
-//                Text(
-//                    modifier = Modifier,
-//                    text = "/",
-//                    fontSize = 12.sp
-//                )
-//                Text(
-//                    modifier = Modifier
-//                        .padding(4.dp),
-//                    text = morningData?.get(0)?.lowerPressure.toString(),
-//                    fontSize = 12.sp
-//                )
-//                Text(
-//                    modifier = Modifier,
-//                    text = "-",
-//                    fontSize = 12.sp
-//                )
-//                Text(
-//                    modifier = Modifier
-//                        .padding(4.dp),
-//                    text = morningData?.get(0)?.pulse.toString(),
-//                    fontSize = 12.sp
-//                )
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun Cell(
@@ -216,7 +139,7 @@ fun Cell(
                 )
                 Text(
                     modifier = Modifier,
-                    text = "-",
+                    text = " ",
                     fontSize = 12.sp
                 )
                 Text(
