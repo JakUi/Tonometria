@@ -64,8 +64,7 @@ class RecordsRepositoryImpl @Inject constructor(
         wroteAt: DayPart,
         toUpdate: ToUpdate
     ) {
-        val recordId: Int = recordsDao.getRecordId(year, month, day, wroteAt)
-        recordsDao.editRecord(recordId, toUpdate)
+        recordsDao.editRecord(year, month, day, wroteAt, toUpdate)
     }
 
     override suspend fun deleteRecord(
@@ -74,8 +73,7 @@ class RecordsRepositoryImpl @Inject constructor(
         day: Int,
         wroteAt: DayPart
     ) {
-        val recordId: Int = recordsDao.getRecordId(year, month, day, wroteAt)
-        recordsDao.deleteRecord(recordId)
+        recordsDao.deleteRecord(year, month, day, wroteAt)
     }
 
     override suspend fun addCommentToRecord(
@@ -85,7 +83,6 @@ class RecordsRepositoryImpl @Inject constructor(
         wroteAt: DayPart,
         comment: String
     ) {
-        val recordId: Int = recordsDao.getRecordId(year, month, day, wroteAt)
-        recordsDao.addCommentToRecord(recordId, comment)
+        recordsDao.addCommentToRecord(year, month, day, wroteAt, comment)
     }
 }
