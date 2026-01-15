@@ -104,23 +104,31 @@ class MonthViewmodel @Inject constructor(
     fun processCellCommand(command: CellCommand) {
         viewModelScope.launch {
             when (command) {
-                is CellCommand.AddData -> addNewRecordUseCase(record = command.record)
+                is CellCommand.AddData -> {
+                    viewModelScope.launch {
+                        addNewRecordUseCase(record = command.record)
+                    }
+                }
                 is CellCommand.EditData -> {
-                    editRecordUseCase(
-                        year = command.year,
-                        month = command.month,
-                        day = command.day,
-                        wroteAt = command.wroteAt,
-                        toUpdate = command.toUpdate
-                    )
+                    viewModelScope.launch {
+                        editRecordUseCase(
+                            year = command.year,
+                            month = command.month,
+                            day = command.day,
+                            wroteAt = command.wroteAt,
+                            toUpdate = command.toUpdate
+                        )
+                    }
                 }
                 is CellCommand.DeleteRecord -> {
-                    deleteRecordUseCase(
-                        year = command.year,
-                        month = command.month,
-                        day = command.day,
-                        wroteAt = command.wroteAt,
-                    )
+                    viewModelScope.launch {
+                        deleteRecordUseCase(
+                            year = command.year,
+                            month = command.month,
+                            day = command.day,
+                            wroteAt = command.wroteAt,
+                        )
+                    }
                 }
             }
         }
