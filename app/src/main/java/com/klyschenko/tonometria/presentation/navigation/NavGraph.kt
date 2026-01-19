@@ -23,7 +23,11 @@ fun NavGraph() {
             )
         }
         composable(Screen.CreateRecordScreen.route) {
-            CreateRecord()
+            CreateRecord(
+                onSaveClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
     }

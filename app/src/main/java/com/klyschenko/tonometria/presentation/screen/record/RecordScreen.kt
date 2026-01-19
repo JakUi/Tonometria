@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.maxLength
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,7 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -44,11 +42,11 @@ import com.klyschenko.tonometria.presentation.ui.textfield.DigitOnlyInputTransfo
 fun CreateRecord(
     modifier: Modifier = Modifier,
     viewModel: CreateRecordViewModel = hiltViewModel(),
+    onSaveClick: () -> Unit
 ) {
-
-    val state = viewModel.state.collectAsState()
-    val currentState = state.value
-    val isSaveEnabled = currentState.isSaveEnabled
+//
+//    val state = viewModel.state.collectAsState()
+//    val currentState = state.value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -65,21 +63,25 @@ fun CreateRecord(
                     .padding(horizontal = 24.dp)
                     .fillMaxWidth(),
                 onClick = {
+                    val upper = viewModel.upperPressureState.text.toString().toIntOrNull() ?: return@Button
+                    val lower = viewModel.lowerPressureState.text.toString().toIntOrNull() ?: return@Button
+                    val pulse = viewModel.pulseState.text.toString().toIntOrNull() ?: return@Button
                     viewModel.processCommand(
                         CreateRecordViewModel.RecordCommand.Create(
                             year = 2026, // Поправить!
                             month = 1, // Поправить!
                             day = 16, // Поправить!
                             wroteAt = DayPart.DAY, // Поправить!
-                            upperPressure = 120, // Поправить!
-                            lowerPressure = 80, // Поправить!
-                            pulse = 65, // Поправить!
+                            upperPressure = upper,
+                            lowerPressure = lower,
+                            pulse = pulse,
                             comment = "" // Поправить!
                         )
                     )
+                    onSaveClick()
                 },
                 shape = RoundedCornerShape(10.dp),
-                enabled = isSaveEnabled,
+                enabled = viewModel.isSaveEnabled,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     disabledContainerColor = MaterialTheme.colorScheme.primary.copy(
@@ -111,7 +113,7 @@ fun CreateRecord(
             Field(text = "Upper") {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(upperFR),
-                    state = rememberTextFieldState(),
+                    state = viewModel.upperPressureState,
 //                    label = { Text("Upper") },
                     inputTransformation = InputTransformation.maxLength(3)
                         .then(DigitOnlyInputTransformation()),
@@ -120,7 +122,7 @@ fun CreateRecord(
                         imeAction = ImeAction.Next
                     ),
                     onKeyboardAction = KeyboardActionHandler { _ ->
-                        pulseFR.requestFocus()
+                        lowerFR.requestFocus()
                     }
                 )
             }
@@ -128,7 +130,7 @@ fun CreateRecord(
             Field(text = "Lower") {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(lowerFR),
-                    state = rememberTextFieldState(),
+                    state = viewModel.lowerPressureState,
 //                    label = { Text("Lower") },
                     inputTransformation = InputTransformation.maxLength(3)
                         .then(DigitOnlyInputTransformation()),
@@ -145,7 +147,7 @@ fun CreateRecord(
             Field(text = "Pulse") {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(pulseFR),
-                    state = rememberTextFieldState(),
+                    state = viewModel.pulseState,
 //                    label = { Text("Pulse") },
                     inputTransformation = InputTransformation.maxLength(3)
                         .then(DigitOnlyInputTransformation()),
