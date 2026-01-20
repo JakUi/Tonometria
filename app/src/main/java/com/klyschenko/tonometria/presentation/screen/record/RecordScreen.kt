@@ -43,6 +43,7 @@ fun CreateRecord(
     modifier: Modifier = Modifier,
     viewModel: CreateRecordViewModel = hiltViewModel(),
     day: Int,
+    dayPart: DayPart,
     onSaveClick: () -> Unit
 ) {
 //
@@ -72,7 +73,7 @@ fun CreateRecord(
                             year = 2026, // Поправить!
                             month = 1, // Поправить!
                             day = day,
-                            wroteAt = DayPart.DAY, // Поправить!
+                            wroteAt = dayPart,
                             upperPressure = upper,
                             lowerPressure = lower,
                             pulse = pulse,

@@ -41,7 +41,7 @@ import kotlin.Unit
 
 @Composable
 fun Month(
-    onCellClick: (day: Int) -> Unit,
+    onCellClick: (day: Int, dayPart: DayPart) -> Unit,
     ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -81,7 +81,7 @@ fun DayRow(
     modifier: Modifier = Modifier,
     index: Int = 15,
     viewModel: MonthViewmodel = hiltViewModel(),
-    onCellClick: (day: Int) -> Unit
+    onCellClick: (day: Int, dayPart: DayPart) -> Unit
 ) {
     val rowShape = RoundedCornerShape(8.dp)
     val state = viewModel.state.collectAsState()
@@ -128,7 +128,7 @@ fun DayRow(
                 lowerPressure = morningData.valueOf(DataType.LOWER),
                 pulse = morningData.valueOf(DataType.PULSE),
                 onCellClick = {
-                    onCellClick(index)
+                    onCellClick(index, DayPart.MORNING)
                 },
                 onCellLongClick = {
                     viewModel.processCellCommand(
@@ -147,7 +147,7 @@ fun DayRow(
                 lowerPressure = dayData.valueOf(DataType.LOWER),
                 pulse = dayData.valueOf(DataType.PULSE),
                 onCellClick = {
-                    onCellClick(index)
+                    onCellClick(index, DayPart.DAY)
                 },
                 onCellLongClick = {
                     viewModel.processCellCommand(
@@ -166,7 +166,7 @@ fun DayRow(
                 lowerPressure = eveningData.valueOf(DataType.LOWER),
                 pulse = eveningData.valueOf(DataType.PULSE),
                 onCellClick = {
-                    onCellClick(index)
+                    onCellClick(index, DayPart.EVENING)
                 },
                 onCellLongClick = {
                     viewModel.processCellCommand(
