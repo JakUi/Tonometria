@@ -42,6 +42,7 @@ import com.klyschenko.tonometria.presentation.ui.textfield.DigitOnlyInputTransfo
 fun CreateRecord(
     modifier: Modifier = Modifier,
     viewModel: CreateRecordViewModel = hiltViewModel(),
+    day: Int,
     onSaveClick: () -> Unit
 ) {
 //
@@ -70,7 +71,7 @@ fun CreateRecord(
                         CreateRecordViewModel.RecordCommand.Create(
                             year = 2026, // Поправить!
                             month = 1, // Поправить!
-                            day = 16, // Поправить!
+                            day = day,
                             wroteAt = DayPart.DAY, // Поправить!
                             upperPressure = upper,
                             lowerPressure = lower,
