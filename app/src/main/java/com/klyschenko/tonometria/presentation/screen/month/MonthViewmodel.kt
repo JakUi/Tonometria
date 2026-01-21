@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,6 +44,23 @@ class MonthViewmodel @Inject constructor(
         MutableStateFlow<Map<Int, Map<DayPart, List<PressureData>>>>(emptyMap())
     val state = _state.asStateFlow()
 
+    val _monthState = MutableStateFlow(MonthState())
+    val monthState = _monthState.asStateFlow()
+
+    fun updateMonth() {
+        _monthState.update { previousState ->
+            val newState = previousState.copy(
+                year = selectedYear.value,
+                month = selectedMonth.value
+            )
+            Log.d("Debug", "Update settings method, previous state is: $newState")
+            newState
+        }
+    }
+
+    val monthNumber: Int
+        get() = selectedMonth.value
+
     fun forTestAddRecordsToDB() {
         val record = Record(
             day = 12,
@@ -63,7 +81,13 @@ class MonthViewmodel @Inject constructor(
         viewModelScope.launch {
             addNewRecordUseCase(record)
             addNewRecordUseCase(record2)
-            editRecordUseCase(year = 2026, month =1, day = 12, wroteAt = DayPart.MORNING, toUpdate = ToUpdate.Comment("Cool"))
+            editRecordUseCase(
+                year = 2026,
+                month = 1,
+                day = 12,
+                wroteAt = DayPart.MORNING,
+                toUpdate = ToUpdate.Comment("Cool")
+            )
         }
     }
 
@@ -84,20 +108,20 @@ class MonthViewmodel @Inject constructor(
         loadRecords()
     }
 
-    fun onMonthSelected(month: Int) {
-        savedStateHandle[KEY_MONTH] = month
-    }
 
     fun onYearSelected(year: Int) {
         savedStateHandle[KEY_YEAR] = year
     }
 
     fun processMonthCommand(command: MonthCommand) {
-        viewModelScope.launch {
-            when (command) {
-                is MonthCommand.ChangeMonth -> onMonthSelected(month = command.month)
-                is MonthCommand.OpenRecord -> TODO()
+        when (command) {
+            is MonthCommand.ChangeMonth -> {
+                savedStateHandle[KEY_MONTH] = command.month
+                Log.d("Debug", "Command month: ${command.month}")
+                Log.d("Debug", "Month in VM: $monthNumber")
+                updateMonth()
             }
+
         }
     }
 
@@ -109,6 +133,7 @@ class MonthViewmodel @Inject constructor(
                         addNewRecordUseCase(record = command.record)
                     }
                 }
+
                 is CellCommand.EditData -> {
                     viewModelScope.launch {
                         editRecordUseCase(
@@ -120,6 +145,7 @@ class MonthViewmodel @Inject constructor(
                         )
                     }
                 }
+
                 is CellCommand.DeleteRecord -> {
                     viewModelScope.launch {
                         deleteRecordUseCase(
@@ -133,18 +159,24 @@ class MonthViewmodel @Inject constructor(
             }
         }
     }
+
+
 }
+
+data class MonthState(
+    val year: Int = 2026,
+    val month: Int = 1
+)
 
 sealed interface MonthCommand {
 
     data class ChangeMonth(val month: Int) : MonthCommand
 
-    data class OpenRecord(val recordId: Int, val wroteAt: DayPart) : MonthCommand
 }
 
 sealed interface CellCommand {
 
-    data class AddData(val record: Record): CellCommand
+    data class AddData(val record: Record) : CellCommand
 
     data class EditData(
         val year: Int,
@@ -152,12 +184,12 @@ sealed interface CellCommand {
         val day: Int,
         val wroteAt: DayPart,
         val toUpdate: ToUpdate
-    ): CellCommand
+    ) : CellCommand
 
     data class DeleteRecord(
         val year: Int,
         val month: Int,
         val day: Int,
         val wroteAt: DayPart
-    ): CellCommand
+    ) : CellCommand
 }

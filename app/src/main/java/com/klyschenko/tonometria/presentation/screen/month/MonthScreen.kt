@@ -14,40 +14,76 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.pressureData.DataType
 import com.klyschenko.tonometria.domain.pressureData.valueOf
+import com.klyschenko.tonometria.presentation.util.getMonthName
+import com.klyschenko.tonometria.presentation.util.getMonthNumber
 import kotlin.Int
 import kotlin.Unit
 
 
 @Composable
 fun Month(
+    viewModel: MonthViewmodel = hiltViewModel(),
     onCellClick: (day: Int, dayPart: DayPart) -> Unit,
-    ) {
+) {
+    val monthState by viewModel.monthState.collectAsState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Data") }
+                title = { Text("Data") },
+                actions = {
+                    MonthDropdown(
+                        options = listOf(
+                            "January",
+                            "February",
+                            "March",
+                            "April",
+                            "May",
+                            "June",
+                            "July",
+                            "August",
+                            "September",
+                            "October",
+                            "November",
+                            "December"
+                        ),
+                        selected = monthState.month.getMonthName(),
+                        onSelected = {
+                            viewModel.processMonthCommand(command = MonthCommand.ChangeMonth(month = it.getMonthNumber()))
+                        }
+                    )
+                }
             )
         }
     ) { innerPadding ->
@@ -68,6 +104,7 @@ fun Month(
             ) { _, item ->
                 DayRow(
                     modifier = Modifier.fillMaxWidth(),
+                    viewModel = viewModel,
                     index = item,
                     onCellClick = onCellClick
                 )
@@ -80,11 +117,12 @@ fun Month(
 fun DayRow(
     modifier: Modifier = Modifier,
     index: Int = 15,
-    viewModel: MonthViewmodel = hiltViewModel(),
+    viewModel: MonthViewmodel,
     onCellClick: (day: Int, dayPart: DayPart) -> Unit
 ) {
     val rowShape = RoundedCornerShape(8.dp)
     val state = viewModel.state.collectAsState()
+    val monthState by viewModel.monthState.collectAsState()
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -133,8 +171,8 @@ fun DayRow(
                 onCellLongClick = {
                     viewModel.processCellCommand(
                         CellCommand.DeleteRecord(
-                            year = 2026, // Поправить!!!!!
-                            month = 1, // Поправить!!!!!
+                            year = monthState.year,
+                            month = monthState.month,
                             day = index,
                             wroteAt = DayPart.MORNING
                         )
@@ -152,10 +190,10 @@ fun DayRow(
                 onCellLongClick = {
                     viewModel.processCellCommand(
                         CellCommand.DeleteRecord(
-                            year = 2026, // Поправить!!!!!
-                            month = 1, // Поправить!!!!!
+                            year = monthState.year,
+                            month = monthState.month,
                             day = index,
-                            wroteAt = DayPart.DAY
+                            wroteAt = DayPart.MORNING
                         )
                     )
                 }
@@ -171,10 +209,10 @@ fun DayRow(
                 onCellLongClick = {
                     viewModel.processCellCommand(
                         CellCommand.DeleteRecord(
-                            year = 2026, // Поправить!!!!!
-                            month = 1, // Поправить!!!!!
+                            year = monthState.year,
+                            month = monthState.month,
                             day = index,
-                            wroteAt = DayPart.EVENING
+                            wroteAt = DayPart.MORNING
                         )
                     )
                 }
@@ -239,6 +277,50 @@ fun Cell(
                         .padding(4.dp),
                     text = pulse,
                     fontSize = 12.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MonthDropdown(
+    options: List<String>,
+    selected: String,
+    onSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        modifier = Modifier
+            .width(152.dp),
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selected,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            modifier = Modifier.menuAnchor(),
+            shape = RoundedCornerShape(12.dp),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent
+            ),
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onSelected(option)
+                        expanded = false
+                    }
                 )
             }
         }
