@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.klyschenko.tonometria.data.db.dao.RecordsDao
 import com.klyschenko.tonometria.data.RecordsDatabase
+import com.klyschenko.tonometria.data.repository.DateRepositoryImpl
 import com.klyschenko.tonometria.data.repository.RecordsRepositoryImpl
+import com.klyschenko.tonometria.domain.repository.DateRepository
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
 import dagger.Binds
 import dagger.Module
@@ -24,6 +26,12 @@ interface DataModule {
     fun bindRecordsRepository(
         impl: RecordsRepositoryImpl
     ): RecordsRepository
+
+    @Binds
+    @Singleton
+    fun bindDateRepository(
+        impl: DateRepositoryImpl
+    ): DateRepository
 
     companion object {
         @Singleton

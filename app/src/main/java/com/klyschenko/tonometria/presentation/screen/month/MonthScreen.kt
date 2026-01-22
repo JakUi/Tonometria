@@ -56,7 +56,7 @@ fun Month(
     viewModel: MonthViewmodel = hiltViewModel(),
     onCellClick: (day: Int, dayPart: DayPart) -> Unit,
 ) {
-    val monthState by viewModel.monthState.collectAsState()
+    val monthState by viewModel.dateState.collectAsState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -80,7 +80,7 @@ fun Month(
                         ),
                         selected = monthState.month.getMonthName(),
                         onSelected = {
-                            viewModel.processMonthCommand(command = MonthCommand.ChangeMonth(month = it.getMonthNumber()))
+                            viewModel.processDateCommand(command = DateCommand.ChangeMonth(month = it.getMonthNumber()))
                         }
                     )
                 }
@@ -122,7 +122,7 @@ fun DayRow(
 ) {
     val rowShape = RoundedCornerShape(8.dp)
     val state = viewModel.state.collectAsState()
-    val monthState by viewModel.monthState.collectAsState()
+    val monthState by viewModel.dateState.collectAsState()
 
     Column(
         modifier = modifier.fillMaxWidth()
