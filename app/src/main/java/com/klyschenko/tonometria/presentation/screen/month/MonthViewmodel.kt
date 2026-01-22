@@ -48,6 +48,7 @@ class MonthViewmodel @Inject constructor(
     val monthState = _monthState.asStateFlow()
 
     fun updateMonth() {
+        onMonthSelected(selectedMonth.value)
         _monthState.update { previousState ->
             val newState = previousState.copy(
                 year = selectedYear.value,
@@ -58,38 +59,49 @@ class MonthViewmodel @Inject constructor(
         }
     }
 
-    val monthNumber: Int
-        get() = selectedMonth.value
+//    val monthNumber: Int
+//        get() = selectedMonth.value
 
-    fun forTestAddRecordsToDB() {
-        val record = Record(
-            day = 12,
-            month = 1,
-            year = 2026,
-            wroteAt = DayPart.MORNING,
-            data = PressureData(120, 80, 67, "")
-        )
+//    fun forTestAddRecordsToDB() {
+//        val record = Record(
+//            day = 12,
+//            month = 1,
+//            year = 2026,
+//            wroteAt = DayPart.MORNING,
+//            data = PressureData(120, 80, 67, "")
+//        )
+//
+//        val record2 = Record(
+//            day = 13,
+//            month = 1,
+//            year = 2026,
+//            wroteAt = DayPart.DAY,
+//            data = PressureData(119, 79, 64, "Second")
+//        )
+//
+//        viewModelScope.launch {
+//            addNewRecordUseCase(record)
+//            addNewRecordUseCase(record2)
+//            editRecordUseCase(
+//                year = 2026,
+//                month = 1,
+//                day = 12,
+//                wroteAt = DayPart.MORNING,
+//                toUpdate = ToUpdate.Comment("Cool")
+//            )
+//        }
+//    }
 
-        val record2 = Record(
-            day = 13,
-            month = 1,
-            year = 2026,
-            wroteAt = DayPart.DAY,
-            data = PressureData(119, 79, 64, "Second")
-        )
-
-        viewModelScope.launch {
-            addNewRecordUseCase(record)
-            addNewRecordUseCase(record2)
-            editRecordUseCase(
-                year = 2026,
-                month = 1,
-                day = 12,
-                wroteAt = DayPart.MORNING,
-                toUpdate = ToUpdate.Comment("Cool")
-            )
-        }
-    }
+//    fun loadRecords() {
+//        viewModelScope.launch {
+//            getAllMonthsRecordsUseCase(
+//                year = selectedYear.value,
+//                month = selectedMonth.value
+//            ).collect { map ->
+//                _state.value = map
+//            }
+//        }
+//    }
 
     fun loadRecords() {
         viewModelScope.launch {
@@ -98,9 +110,9 @@ class MonthViewmodel @Inject constructor(
                 month = selectedMonth.value
             ).collect { map ->
                 _state.value = map
-                Log.d("Debug2", "state=${_state.value}")
             }
         }
+        Log.d("Debug", "Current state is: ${_state.value}")
     }
 
     init {
@@ -113,13 +125,16 @@ class MonthViewmodel @Inject constructor(
         savedStateHandle[KEY_YEAR] = year
     }
 
+    fun onMonthSelected(month: Int) {
+        savedStateHandle[KEY_MONTH] = month
+    }
+
     fun processMonthCommand(command: MonthCommand) {
         when (command) {
             is MonthCommand.ChangeMonth -> {
                 savedStateHandle[KEY_MONTH] = command.month
-                Log.d("Debug", "Command month: ${command.month}")
-                Log.d("Debug", "Month in VM: $monthNumber")
                 updateMonth()
+                loadRecords()
             }
 
         }
@@ -159,8 +174,6 @@ class MonthViewmodel @Inject constructor(
             }
         }
     }
-
-
 }
 
 data class MonthState(
@@ -171,7 +184,6 @@ data class MonthState(
 sealed interface MonthCommand {
 
     data class ChangeMonth(val month: Int) : MonthCommand
-
 }
 
 sealed interface CellCommand {

@@ -116,7 +116,7 @@ fun Month(
 @Composable
 fun DayRow(
     modifier: Modifier = Modifier,
-    index: Int = 15,
+    index: Int,
     viewModel: MonthViewmodel,
     onCellClick: (day: Int, dayPart: DayPart) -> Unit
 ) {
