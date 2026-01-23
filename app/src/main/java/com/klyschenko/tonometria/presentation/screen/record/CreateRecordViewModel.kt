@@ -13,8 +13,10 @@ import com.klyschenko.tonometria.domain.usecase.GetMonthUseCase
 import com.klyschenko.tonometria.domain.usecase.GetYearUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,6 +42,12 @@ class CreateRecordViewModel @Inject constructor(
             initialValue = 1
         )
 
+    private val _dateState = MutableStateFlow(
+        DateState(
+            selectedYear.value, selectedMonth.value
+        )
+    )
+
     val upperPressureState = TextFieldState()
     val lowerPressureState = TextFieldState()
     val pulseState = TextFieldState()
@@ -49,14 +57,27 @@ class CreateRecordViewModel @Inject constructor(
                 lowerPressureState.text.isNotBlank() &&
                 pulseState.text.isNotBlank()
 
+    init {
+        viewModelScope.launch {
+            getMonthUseCase().collect { monthNumber ->
+                _dateState.update { previousState ->
+                    val newState = previousState.copy(
+                        month = monthNumber
+                    )
+                    newState
+                }
+            }
+        }
+    }
+
     fun processCommand(command: RecordCommand) {
         when (command) {
             is RecordCommand.Create -> {
                 viewModelScope.launch {
                     addNewRecordUseCase(
                         Record(
-                            year = selectedYear.value,
-                            month = selectedMonth.value,
+                            year = _dateState.value.year,
+                            month = _dateState.value.month,
                             day = command.day,
                             wroteAt = command.wroteAt,
                             data = PressureData(
@@ -71,6 +92,11 @@ class CreateRecordViewModel @Inject constructor(
             }
         }
     }
+
+    data class DateState(
+        val year: Int,
+        val month: Int
+    )
 
     sealed interface RecordCommand {
 

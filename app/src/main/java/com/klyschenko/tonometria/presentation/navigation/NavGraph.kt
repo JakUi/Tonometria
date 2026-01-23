@@ -35,8 +35,11 @@ fun NavGraph() {
             CreateRecord(
                 day = day,
                 dayPart = dayPart,
+
                 onSaveClick = {
-                    navController.popBackStack()
+                    navController.navigate(
+                        Screen.MonthScreen.route
+                    )
                 }
             )
         }
