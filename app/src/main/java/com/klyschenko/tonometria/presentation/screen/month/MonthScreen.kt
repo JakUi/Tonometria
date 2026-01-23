@@ -2,6 +2,7 @@
 
 package com.klyschenko.tonometria.presentation.screen.month
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -57,6 +58,7 @@ fun Month(
     onCellClick: (day: Int, dayPart: DayPart) -> Unit,
 ) {
     val monthState by viewModel.dateState.collectAsState()
+    Log.d("DataStore", "Selected month is: ${monthState.month.getMonthName()}")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

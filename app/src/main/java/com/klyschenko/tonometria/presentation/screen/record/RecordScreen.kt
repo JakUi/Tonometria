@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -46,9 +47,6 @@ fun CreateRecord(
     dayPart: DayPart,
     onSaveClick: () -> Unit
 ) {
-//
-//    val state = viewModel.state.collectAsState()
-//    val currentState = state.value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -70,8 +68,6 @@ fun CreateRecord(
                     val pulse = viewModel.pulseState.text.toString().toIntOrNull() ?: return@Button
                     viewModel.processCommand(
                         CreateRecordViewModel.RecordCommand.Create(
-                            year = 2026, // Поправить!
-                            month = 1, // Поправить!
                             day = day,
                             wroteAt = dayPart,
                             upperPressure = upper,

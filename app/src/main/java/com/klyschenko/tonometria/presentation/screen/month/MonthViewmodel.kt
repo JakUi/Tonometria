@@ -3,7 +3,6 @@
 package com.klyschenko.tonometria.presentation.screen.month
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.klyschenko.tonometria.domain.entity.DayPart
@@ -21,8 +20,10 @@ import com.klyschenko.tonometria.domain.usecase.SetYearUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,7 +31,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MonthViewmodel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val getAllMonthsRecordsUseCase: GetAllMonthsRecordsUseCase,
     private val addNewRecordUseCase: AddNewRecordUseCase,
     private val editRecordUseCase: EditRecordUseCase,
@@ -41,38 +41,31 @@ class MonthViewmodel @Inject constructor(
     private val getYearUseCase: GetYearUseCase
 ) : ViewModel() {
 
-//    companion object {
-//        private const val KEY_MONTH = "month"
-//        private const val KEY_YEAR = "year"
-//    }
-//
-//    private val selectedYear = savedStateHandle.getStateFlow(KEY_YEAR, 2026)
-//    private val selectedMonth = savedStateHandle.getStateFlow(KEY_MONTH, 1)
-
     private val selectedYear = getYearUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 2026
+        )
+
     private val selectedMonth = getMonthUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 1
+        )
 
     private val _state =
         MutableStateFlow<Map<Int, Map<DayPart, List<PressureData>>>>(emptyMap())
     val state = _state.asStateFlow()
 
-    val _dateState = MutableStateFlow(DateState())
+    private val _dateState = MutableStateFlow(
+        DateState(
+            selectedYear.value, selectedMonth.value
+        )
+    )
     val dateState = _dateState.asStateFlow()
 
-//    fun updateMonth() {
-//        onMonthSelected(selectedMonth.value)
-//        _monthState.update { previousState ->
-//            val newState = previousState.copy(
-//                year = selectedYear.value,
-//                month = selectedMonth.value
-//            )
-//            Log.d("Debug", "Update settings method, previous state is: $newState")
-//            viewModelScope.launch {
-//                setMonthUseCase(month = selectedMonth.value)
-//            }
-//            newState
-//        }
-//    }
 
     fun updateMonth(monthNumber: Int) {
         viewModelScope.launch {
@@ -82,6 +75,7 @@ class MonthViewmodel @Inject constructor(
                 )
                 Log.d("Debug", "Update Month method, new state is: $newState")
                 setMonthUseCase(month = monthNumber)
+                loadRecords()
                 newState
             }
         }
@@ -101,39 +95,32 @@ class MonthViewmodel @Inject constructor(
 
     fun loadRecords() {
         viewModelScope.launch {
+            Log.d("Debug", "Selected month: ${selectedMonth.first()}")
             getAllMonthsRecordsUseCase(
-                year = selectedYear.first(),
+                year = selectedYear.value,
                 month = selectedMonth.first()
             ).collect { map ->
                 _state.value = map
             }
         }
-        Log.d("Debug", "Current state is: ${_state.value}")
     }
 
     init {
+        viewModelScope.launch {
+            getMonthUseCase().collect { value ->
+                Log.d("DataStore", "Month from DataStore = $value")
+            }
+        }
+
+        updateMonth(selectedMonth.value)
         loadRecords()
     }
-
-
-//    fun onYearSelected(year: Int) {
-//        savedStateHandle[KEY_YEAR] = year
-//        viewModelScope.launch {
-//            setYearUseCase(year)
-//        }
-//    }
-//
-//    fun onMonthSelected(month: Int) {
-//        savedStateHandle[KEY_MONTH] = month
-//        viewModelScope.launch {
-//            setMonthUseCase(month)
-//        }
-//    }
 
     fun processDateCommand(command: DateCommand) {
         when (command) {
             is DateCommand.ChangeMonth -> {
                 updateMonth(command.month)
+                Log.d("Debug", "Month was updated")
                 loadRecords()
             }
 
@@ -178,8 +165,8 @@ class MonthViewmodel @Inject constructor(
 }
 
 data class DateState(
-    val year: Int = 2026,
-    val month: Int = 1
+    val year: Int,
+    val month: Int
 )
 
 sealed interface DateCommand {
