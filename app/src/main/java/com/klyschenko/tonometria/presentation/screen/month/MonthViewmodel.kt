@@ -55,6 +55,9 @@ class MonthViewmodel @Inject constructor(
             initialValue = 1
         )
 
+    private val _dateLoaded = MutableStateFlow<Boolean>(false)
+    val dateLoaded = _dateLoaded.asStateFlow()
+
     private val _state =
         MutableStateFlow<Map<Int, Map<DayPart, List<PressureData>>>>(emptyMap())
     val state = _state.asStateFlow()
@@ -106,13 +109,17 @@ class MonthViewmodel @Inject constructor(
     }
 
     init {
+        Log.d("DataStore", "Is date loaded: ${dateLoaded.value}")
         viewModelScope.launch {
-            getMonthUseCase().collect { value ->
-                Log.d("DataStore", "Month from DataStore = $value")
+            getMonthUseCase().collect { monthNumber ->
+                Log.d("DataStore", "Month from DataStore = $monthNumber")
+                updateMonth(monthNumber)
             }
         }
-
-        updateMonth(selectedMonth.value)
+        _dateLoaded.update {
+            true
+        }
+        Log.d("DataStore", "Is date loaded: ${dateLoaded.value}")
         loadRecords()
     }
 

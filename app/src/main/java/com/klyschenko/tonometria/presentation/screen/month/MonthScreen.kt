@@ -39,10 +39,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import coil3.compose.AsyncImage
+import com.klyschenko.tonometria.R
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.pressureData.DataType
 import com.klyschenko.tonometria.domain.pressureData.valueOf
@@ -58,58 +62,76 @@ fun Month(
     onCellClick: (day: Int, dayPart: DayPart) -> Unit,
 ) {
     val monthState by viewModel.dateState.collectAsState()
+    val dateLoadedState by viewModel.dateLoaded.collectAsState()
     Log.d("DataStore", "Selected month is: ${monthState.month.getMonthName()}")
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text("Data") },
-                actions = {
-                    MonthDropdown(
-                        options = listOf(
-                            "January",
-                            "February",
-                            "March",
-                            "April",
-                            "May",
-                            "June",
-                            "July",
-                            "August",
-                            "September",
-                            "October",
-                            "November",
-                            "December"
-                        ),
-                        selected = monthState.month.getMonthName(),
-                        onSelected = {
-                            viewModel.processDateCommand(command = DateCommand.ChangeMonth(month = it.getMonthNumber()))
-                        }
-                    )
-                }
+
+    if (!dateLoadedState) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp)),
+                model = R.drawable.loader,
+                contentDescription = "Image from gallery",
+                contentScale = ContentScale.FillWidth
             )
         }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(
-                top = 24.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            itemsIndexed(
-                items = (1..31).toList() // создаём список из 30 элементов: 1..31
-            ) { _, item ->
-                DayRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    viewModel = viewModel,
-                    index = item,
-                    onCellClick = onCellClick
+    } else {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = { Text("Data") },
+                    actions = {
+                        MonthDropdown(
+                            options = listOf(
+                                "January",
+                                "February",
+                                "March",
+                                "April",
+                                "May",
+                                "June",
+                                "July",
+                                "August",
+                                "September",
+                                "October",
+                                "November",
+                                "December"
+                            ),
+                            selected = monthState.month.getMonthName(),
+                            onSelected = {
+                                viewModel.processDateCommand(command = DateCommand.ChangeMonth(month = it.getMonthNumber()))
+                            }
+                        )
+                    }
                 )
+            }
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentPadding = PaddingValues(
+                    top = 24.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                itemsIndexed(
+                    items = (1..31).toList() // создаём список из 30 элементов: 1..31
+                ) { _, item ->
+                    DayRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        viewModel = viewModel,
+                        index = item,
+                        onCellClick = onCellClick
+                    )
+                }
             }
         }
     }
