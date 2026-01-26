@@ -2,7 +2,6 @@
 
 package com.klyschenko.tonometria.presentation.screen.month
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.klyschenko.tonometria.domain.entity.DayPart
@@ -59,7 +58,9 @@ class MonthViewmodel @Inject constructor(
     val dateLoaded = _dateLoaded.asStateFlow()
 
     private val _state =
-        MutableStateFlow<Map<Int, Map<DayPart, List<PressureData>>>>(emptyMap())
+        MutableStateFlow<Map<Int, Map<DayPart, List<PressureData>>>>(
+            emptyMap()
+        )
     val state = _state.asStateFlow()
 
     private val _dateState = MutableStateFlow(
@@ -69,66 +70,52 @@ class MonthViewmodel @Inject constructor(
     )
     val dateState = _dateState.asStateFlow()
 
+    suspend fun updateMonth(monthNumber: Int) {
+        _dateState.update { previousState ->
+            val newState = previousState.copy(
+                month = monthNumber
+            )
+            setMonthUseCase(month = monthNumber)
+            newState
+        }
 
-    fun updateMonth(monthNumber: Int) {
-        viewModelScope.launch {
-            _dateState.update { previousState ->
-                val newState = previousState.copy(
-                    month = monthNumber
-                )
-                Log.d("Debug", "Update Month method, new state is: $newState")
-                setMonthUseCase(month = monthNumber)
-                loadRecords()
-                newState
-            }
+    }
+
+    suspend fun updateYear(yearNumber: Int) {
+        _dateState.update { previousState ->
+            val newState = previousState.copy(
+                year = yearNumber
+            )
+            setYearUseCase(year = yearNumber)
+            newState
         }
     }
 
-    fun updateYear(yearNumber: Int) {
-        viewModelScope.launch {
-            _dateState.update { previousState ->
-                val newState = previousState.copy(
-                    year = yearNumber
-                )
-                setYearUseCase(year = yearNumber)
-                newState
-            }
-        }
-    }
-
-    fun loadRecords() {
-        viewModelScope.launch {
-            Log.d("Debug", "Selected month: ${selectedMonth.first()}")
-            getAllMonthsRecordsUseCase(
-                year = selectedYear.value,
-                month = selectedMonth.first()
-            ).collect { map ->
-                _state.value = map
-            }
-        }
+    suspend fun loadRecords() {
+        val map = getAllMonthsRecordsUseCase(
+            year = dateState.value.year,
+            month = dateState.value.month
+        ).first()
+        _state.value = map
     }
 
     init {
-        Log.d("DataStore", "Is date loaded: ${dateLoaded.value}")
         viewModelScope.launch {
-            getMonthUseCase().collect { monthNumber ->
-                Log.d("DataStore", "Month from DataStore = $monthNumber")
-                updateMonth(monthNumber)
-            }
+            val monthNumber = getMonthUseCase().first()
+            updateMonth(monthNumber)
+            loadRecords()
+            _dateLoaded.update { true }
         }
-        _dateLoaded.update {
-            true
-        }
-        Log.d("DataStore", "Is date loaded: ${dateLoaded.value}")
-        loadRecords()
     }
+
 
     fun processDateCommand(command: DateCommand) {
         when (command) {
             is DateCommand.ChangeMonth -> {
-                updateMonth(command.month)
-                Log.d("Debug", "Month was updated")
-                loadRecords()
+                viewModelScope.launch {
+                    updateMonth(command.month)
+                    loadRecords()
+                }
             }
 
             is DateCommand.ChangeYear -> TODO()
