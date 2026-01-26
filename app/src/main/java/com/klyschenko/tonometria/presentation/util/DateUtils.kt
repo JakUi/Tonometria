@@ -35,3 +35,7 @@ fun String.getMonthNumber(): Int {
     )
     return months[this] ?: 1
 }
+
+fun Int.getYearAsString(): String {
+    return this.toString()
+}

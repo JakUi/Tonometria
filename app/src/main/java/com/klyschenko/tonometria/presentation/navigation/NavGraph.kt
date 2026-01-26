@@ -1,7 +1,6 @@
 package com.klyschenko.tonometria.presentation.navigation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,7 +25,8 @@ fun NavGraph() {
                             clickedDay, dayPart
                         )
                     )
-                }
+                },
+                onYearClick = {}
             )
         }
         composable(Screen.CreateRecordScreen.route) {
@@ -35,8 +35,8 @@ fun NavGraph() {
             CreateRecord(
                 day = day,
                 dayPart = dayPart,
-
                 onSaveClick = {
+//                    navController.popBackStack()
                     navController.navigate(
                         Screen.MonthScreen.route
                     )
@@ -62,9 +62,7 @@ sealed class Screen(val route: String) {
 
         fun getDayPart(arguments: Bundle?): DayPart {
             val dayPartString = arguments?.getString("dayPart")
-            Log.d("Debug", "dayPartString: $dayPartString")
             val dayPart: DayPart = DayPart.getByName(dayPartString) ?: DayPart.MORNING
-            Log.d("Debug", "dayPart: $dayPart")
             return dayPart
         }
     }

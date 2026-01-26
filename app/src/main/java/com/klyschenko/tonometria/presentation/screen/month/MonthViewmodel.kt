@@ -6,9 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.entity.PressureData
-import com.klyschenko.tonometria.domain.entity.Record
 import com.klyschenko.tonometria.domain.repository.ToUpdate
-import com.klyschenko.tonometria.domain.usecase.AddNewRecordUseCase
 import com.klyschenko.tonometria.domain.usecase.DeleteRecordUseCase
 import com.klyschenko.tonometria.domain.usecase.EditRecordUseCase
 import com.klyschenko.tonometria.domain.usecase.GetAllMonthsRecordsUseCase
@@ -31,7 +29,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MonthViewmodel @Inject constructor(
     private val getAllMonthsRecordsUseCase: GetAllMonthsRecordsUseCase,
-    private val addNewRecordUseCase: AddNewRecordUseCase,
     private val editRecordUseCase: EditRecordUseCase,
     private val deleteRecordUseCase: DeleteRecordUseCase,
     private val setMonthUseCase: SetMonthUseCase,
@@ -78,7 +75,6 @@ class MonthViewmodel @Inject constructor(
             setMonthUseCase(month = monthNumber)
             newState
         }
-
     }
 
     suspend fun updateYear(yearNumber: Int) {
@@ -108,7 +104,6 @@ class MonthViewmodel @Inject constructor(
         }
     }
 
-
     fun processDateCommand(command: DateCommand) {
         when (command) {
             is DateCommand.ChangeMonth -> {
@@ -125,12 +120,6 @@ class MonthViewmodel @Inject constructor(
     fun processCellCommand(command: CellCommand) {
         viewModelScope.launch {
             when (command) {
-                is CellCommand.AddData -> {
-                    viewModelScope.launch {
-                        addNewRecordUseCase(record = command.record)
-                    }
-                }
-
                 is CellCommand.EditData -> {
                     viewModelScope.launch {
                         editRecordUseCase(
@@ -151,6 +140,7 @@ class MonthViewmodel @Inject constructor(
                             day = command.day,
                             wroteAt = command.wroteAt,
                         )
+                        loadRecords()
                     }
                 }
             }
@@ -171,8 +161,6 @@ sealed interface DateCommand {
 }
 
 sealed interface CellCommand {
-
-    data class AddData(val record: Record) : CellCommand
 
     data class EditData(
         val year: Int,
