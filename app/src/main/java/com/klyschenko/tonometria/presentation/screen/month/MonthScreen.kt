@@ -217,7 +217,7 @@ fun DayRow(
                             year = monthState.year,
                             month = monthState.month,
                             day = index,
-                            wroteAt = DayPart.MORNING
+                            wroteAt = DayPart.DAY
                         )
                     )
                 }
@@ -236,7 +236,7 @@ fun DayRow(
                             year = monthState.year,
                             month = monthState.month,
                             day = index,
-                            wroteAt = DayPart.MORNING
+                            wroteAt = DayPart.EVENING
                         )
                     )
                 }
