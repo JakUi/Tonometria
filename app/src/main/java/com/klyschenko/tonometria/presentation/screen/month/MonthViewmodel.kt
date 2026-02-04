@@ -49,7 +49,7 @@ class MonthViewmodel @Inject constructor(
             initialValue = 1
         )
 
-    private val _dateLoaded = MutableStateFlow<Boolean>(false)
+    private val _dateLoaded = MutableStateFlow(false)
     val dateLoaded = _dateLoaded.asStateFlow()
 
     private val _state =
@@ -101,6 +101,24 @@ class MonthViewmodel @Inject constructor(
             loadRecords()
             _dateLoaded.update { true }
         }
+    }
+
+    fun daysInMonth(monthNumber: Int): Int {
+        val monthCount = mapOf(
+            1 to 31,
+            2 to 28,
+            3 to 31,
+            4 to 30,
+            5 to 31,
+            6 to 30,
+            7 to 31,
+            8 to 31,
+            9 to 30,
+            10 to 31,
+            11 to 30,
+            12 to 31
+        )
+        return monthCount[monthNumber] ?: 31
     }
 
     fun processDateCommand(command: DateCommand) {

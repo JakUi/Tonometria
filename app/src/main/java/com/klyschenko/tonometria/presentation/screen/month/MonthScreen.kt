@@ -158,7 +158,7 @@ fun Month(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 itemsIndexed(
-                    items = (1..31).toList() // создаём список из 30 элементов: 1..31
+                    items = (1 .. viewModel.daysInMonth(dateState.month)).toList()
                 ) { _, item ->
                     DayRow(
                         modifier = Modifier.fillMaxWidth(),
