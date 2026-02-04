@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -90,6 +93,13 @@ fun Month(
             topBar = {
                 TopAppBar(
                     title = {
+                        val interactionSource = remember { MutableInteractionSource() }
+
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect { interaction ->
+                                if (interaction is PressInteraction.Release) onYearClick()
+                            }
+                        }
                         OutlinedTextField(
                             modifier = Modifier
                                 .width(80.dp)
@@ -102,6 +112,7 @@ fun Month(
                                 initialText = dateState.year.getYearAsString()
                             ),
                             readOnly = true,
+                            interactionSource = interactionSource,
                             lineLimits = TextFieldLineLimits.SingleLine,
                             textStyle = TextStyle(
                                 fontSize = 20.sp

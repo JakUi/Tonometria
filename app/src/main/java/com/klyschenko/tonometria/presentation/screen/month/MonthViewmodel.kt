@@ -13,7 +13,6 @@ import com.klyschenko.tonometria.domain.usecase.GetAllMonthsRecordsUseCase
 import com.klyschenko.tonometria.domain.usecase.GetMonthUseCase
 import com.klyschenko.tonometria.domain.usecase.GetYearUseCase
 import com.klyschenko.tonometria.domain.usecase.SetMonthUseCase
-import com.klyschenko.tonometria.domain.usecase.SetYearUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +32,6 @@ class MonthViewmodel @Inject constructor(
     private val deleteRecordUseCase: DeleteRecordUseCase,
     private val setMonthUseCase: SetMonthUseCase,
     private val getMonthUseCase: GetMonthUseCase,
-    private val setYearUseCase: SetYearUseCase,
     private val getYearUseCase: GetYearUseCase
 ) : ViewModel() {
 
@@ -77,12 +75,11 @@ class MonthViewmodel @Inject constructor(
         }
     }
 
-    suspend fun updateYear(yearNumber: Int) {
+    fun updateYear(yearNumber: Int) {
         _dateState.update { previousState ->
             val newState = previousState.copy(
                 year = yearNumber
             )
-            setYearUseCase(year = yearNumber)
             newState
         }
     }
@@ -97,7 +94,9 @@ class MonthViewmodel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val year = getYearUseCase().first()
             val monthNumber = getMonthUseCase().first()
+            updateYear(year)
             updateMonth(monthNumber)
             loadRecords()
             _dateLoaded.update { true }
@@ -112,8 +111,6 @@ class MonthViewmodel @Inject constructor(
                     loadRecords()
                 }
             }
-
-            is DateCommand.ChangeYear -> TODO()
         }
     }
 
@@ -154,8 +151,6 @@ data class DateState(
 )
 
 sealed interface DateCommand {
-
-    data class ChangeYear(val year: Int) : DateCommand
 
     data class ChangeMonth(val month: Int) : DateCommand
 }
