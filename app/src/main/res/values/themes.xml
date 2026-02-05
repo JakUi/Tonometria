@@ -4,7 +4,7 @@
     <style name="Theme.Tonometria" parent="android:Theme.Material.Light.NoActionBar" />
     <style name="Theme.Tonometria.SplashScreen" parent="Theme.SplashScreen"> // указываем что вносим изменения для Splash Screen
         <item name="windowSplashScreenBackground">@color/white</item> // указываем цвет бекграунда splash screen, цвет берём из ресурсов
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_rays_splash_screen</item> // иконка которая будет отображаться,берём из ресурсов
+        <item name="windowSplashScreenAnimatedIcon">@drawable/loader</item> // иконка которая будет отображаться,берём из ресурсов
         <item name="postSplashScreenTheme">@style/Theme.Tonometria</item> // какую тему отображать после закрытия splash screen
         <item name="android:windowSplashScreenAnimationDuration">1000</item>
     </style>
