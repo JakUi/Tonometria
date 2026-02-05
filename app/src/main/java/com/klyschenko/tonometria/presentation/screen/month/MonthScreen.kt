@@ -45,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
@@ -76,15 +75,16 @@ fun Month(
     if (!dateLoadedState) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp)),
+                    .width(140.dp)
+                    .height(100.dp),
                 model = R.drawable.loader,
-                contentDescription = "Image from gallery",
-                contentScale = ContentScale.FillWidth
+                contentDescription = "Screen loader image",
+                contentScale = ContentScale.Fit
             )
         }
     } else {
@@ -158,7 +158,7 @@ fun Month(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 itemsIndexed(
-                    items = (1 .. viewModel.daysInMonth(dateState.month)).toList()
+                    items = (1..viewModel.daysInMonth(dateState.month)).toList()
                 ) { _, item ->
                     DayRow(
                         modifier = Modifier.fillMaxWidth(),
