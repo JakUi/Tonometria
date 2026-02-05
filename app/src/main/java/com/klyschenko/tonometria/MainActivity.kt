@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.klyschenko.tonometria.presentation.navigation.NavGraph
 import com.klyschenko.tonometria.presentation.ui.theme.TonometriaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
