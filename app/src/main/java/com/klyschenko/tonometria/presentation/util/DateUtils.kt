@@ -1,21 +1,25 @@
 package com.klyschenko.tonometria.presentation.util
 
-fun Int.getMonthName(): String {
+import com.klyschenko.tonometria.R
+import com.klyschenko.tonometria.presentation.mapper.UiText
+
+fun Int.getMonthName(): UiText.Res {
+
     val months = mapOf(
-        1 to "January",
-        2 to "February",
-        3 to "March",
-        4 to "April",
-        5 to "May",
-        6 to "June",
-        7 to "July",
-        8 to "August",
-        9 to "September",
-        10 to "October",
-        11 to "November",
-        12 to "December"
+        1 to UiText.Res(R.string.january),
+        2 to UiText.Res(R.string.february),
+        3 to UiText.Res(R.string.march),
+        4 to UiText.Res(R.string.april),
+        5 to UiText.Res(R.string.may),
+        6 to UiText.Res(R.string.june),
+        7 to UiText.Res(R.string.july),
+        8 to UiText.Res(R.string.august),
+        9 to UiText.Res(R.string.september),
+        10 to UiText.Res(R.string.october),
+        11 to UiText.Res(R.string.november),
+        12 to UiText.Res(R.string.december)
     )
-    return months[this] ?: "January"
+    return months[this] ?: UiText.Res(R.string.january)
 }
 
 fun String.getMonthNumber(): Int {
@@ -31,7 +35,19 @@ fun String.getMonthNumber(): Int {
         "September" to 9,
         "October" to 10,
         "November" to 11,
-        "December" to 12
+        "December" to 12,
+        "Январь" to 1,
+        "Февраль" to 2,
+        "Март" to 3,
+        "Апрель" to 4,
+        "Май" to 5,
+        "Июнь" to 6,
+        "Июль" to 7,
+        "Август" to 8,
+        "Сентябрь" to 9,
+        "Октябрь" to 10,
+        "Ноябрь" to 11,
+        "Декабрь" to 12,
     )
     return months[this] ?: 1
 }

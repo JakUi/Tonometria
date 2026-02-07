@@ -26,16 +26,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.klyschenko.tonometria.R
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.presentation.ui.textfield.DigitOnlyInputTransformation
 
@@ -52,7 +53,7 @@ fun CreateRecord(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("Add data") }
+                title = { Text(stringResource(R.string.add_data)) }
             )
         },
         bottomBar = {
@@ -90,7 +91,7 @@ fun CreateRecord(
                 )
             ) {
                 Text(
-                    text = "Save",
+                    text = stringResource(R.string.save),
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -108,7 +109,7 @@ fun CreateRecord(
                 pulseFR
             ) = FocusRequester.createRefs()
 
-            Field(text = "Upper") {
+            Field(text = stringResource(R.string.upper)) {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(upperFR),
                     state = viewModel.upperPressureState,
@@ -125,7 +126,7 @@ fun CreateRecord(
                 )
             }
 
-            Field(text = "Lower") {
+            Field(text = stringResource(R.string.lower)) {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(lowerFR),
                     state = viewModel.lowerPressureState,
@@ -142,7 +143,7 @@ fun CreateRecord(
                 )
             }
 
-            Field(text = "Pulse") {
+            Field(text = stringResource(R.string.pulse)) {
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(pulseFR),
                     state = viewModel.pulseState,
@@ -172,7 +173,7 @@ fun Field(
         Box(
             modifier = Modifier
                 .padding(8.dp)
-                .width(56.dp)
+                .width(86.dp)
         ) {
             Text(
                 text = "$text:",
@@ -180,7 +181,7 @@ fun Field(
             )
         }
         Box(
-            modifier = Modifier.width(240.dp)
+            modifier = Modifier.width(210.dp)
         ) {
             content()
         }

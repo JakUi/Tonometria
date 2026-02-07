@@ -12,4 +12,11 @@
     <string name="november">November</string>
     <string name="october">October</string>
     <string name="december">December</string>
+    <string name="choose_year">Choose year</string>
+    <string name="screen_loader_image">Screen loader image</string>
+    <string name="save">Save</string>
+    <string name="upper">Upper</string>
+    <string name="lower">Lower</string>
+    <string name="pulse">Pulse</string>
+    <string name="add_data">Add data</string>
 </resources>

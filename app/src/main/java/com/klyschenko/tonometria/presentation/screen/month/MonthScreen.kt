@@ -47,6 +47,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,6 +58,7 @@ import com.klyschenko.tonometria.R
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.pressureData.DataType
 import com.klyschenko.tonometria.domain.pressureData.valueOf
+import com.klyschenko.tonometria.presentation.mapper.asString
 import com.klyschenko.tonometria.presentation.util.getMonthName
 import com.klyschenko.tonometria.presentation.util.getMonthNumber
 import com.klyschenko.tonometria.presentation.util.getYearAsString
@@ -71,6 +74,7 @@ fun Month(
 ) {
     val dateState by viewModel.dateState.collectAsState()
     val dateLoadedState by viewModel.dateLoaded.collectAsState()
+    val context = LocalContext.current
 
     if (!dateLoadedState) {
         Column(
@@ -83,7 +87,7 @@ fun Month(
                     .width(140.dp)
                     .height(100.dp),
                 model = R.drawable.loader,
-                contentDescription = "Screen loader image",
+                contentDescription = stringResource(R.string.screen_loader_image),
                 contentScale = ContentScale.Fit
             )
         }
@@ -123,20 +127,20 @@ fun Month(
                     actions = {
                         MonthDropdown(
                             options = listOf(
-                                "January",
-                                "February",
-                                "March",
-                                "April",
-                                "May",
-                                "June",
-                                "July",
-                                "August",
-                                "September",
-                                "October",
-                                "November",
-                                "December"
+                                stringResource(R.string.january),
+                                stringResource(R.string.february),
+                                stringResource(R.string.march),
+                                stringResource(R.string.april),
+                                stringResource(R.string.may),
+                                stringResource(R.string.june),
+                                stringResource(R.string.july),
+                                stringResource(R.string.august),
+                                stringResource(R.string.september),
+                                stringResource(R.string.october),
+                                stringResource(R.string.november),
+                                stringResource(R.string.december)
                             ),
-                            selected = dateState.month.getMonthName(),
+                            selected = dateState.month.getMonthName().asString(context),
                             onSelected = {
                                 viewModel.processDateCommand(command = DateCommand.ChangeMonth(month = it.getMonthNumber()))
                             }
@@ -362,7 +366,7 @@ fun MonthDropdown(
             onValueChange = {},
             readOnly = true,
             textStyle = TextStyle(
-                fontSize = 20.sp
+                fontSize = 16.sp
             ),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             modifier = Modifier.menuAnchor(),
