@@ -51,6 +51,7 @@ class CreateRecordViewModel @Inject constructor(
     val upperPressureState = TextFieldState()
     val lowerPressureState = TextFieldState()
     val pulseState = TextFieldState()
+    val commentState = TextFieldState()
 
     val isSaveEnabled: Boolean
         get() = upperPressureState.text.isNotBlank() &&

@@ -20,4 +20,5 @@
     <string name="lower">Нижнее</string>
     <string name="pulse">Пульс</string>
     <string name="add_data">Добавить данные</string>
+    <string name="comment">Комментарий</string>
 </resources>

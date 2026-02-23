@@ -5,5 +5,6 @@ data class Record(
     val month: Int,
     val day: Int,
     val wroteAt: DayPart,
-    val data: PressureData
+    val data: PressureData,
+    val comment: String = ""
 )

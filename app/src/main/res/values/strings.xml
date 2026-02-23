@@ -19,4 +19,5 @@
     <string name="lower">Lower</string>
     <string name="pulse">Pulse</string>
     <string name="add_data">Add data</string>
+    <string name="comment">Comment</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -67,6 +68,7 @@ fun CreateRecord(
                     val upper = viewModel.upperPressureState.text.toString().toIntOrNull() ?: return@Button
                     val lower = viewModel.lowerPressureState.text.toString().toIntOrNull() ?: return@Button
                     val pulse = viewModel.pulseState.text.toString().toIntOrNull() ?: return@Button
+                    val comment = viewModel.commentState.text
                     viewModel.processCommand(
                         CreateRecordViewModel.RecordCommand.Create(
                             day = day,
@@ -74,7 +76,7 @@ fun CreateRecord(
                             upperPressure = upper,
                             lowerPressure = lower,
                             pulse = pulse,
-                            comment = "" // Поправить!
+                            comment = comment.toString()
                         )
                     )
                     onSaveClick()
@@ -154,6 +156,13 @@ fun CreateRecord(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
                     )
+                )
+            }
+
+            Field(text = stringResource(R.string.comment)) {
+                OutlinedTextField(
+                    modifier = Modifier.height(180.dp),
+                    state = viewModel.commentState,
                 )
             }
         }
