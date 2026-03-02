@@ -41,7 +41,6 @@ fun NavGraph() {
                 day = day,
                 dayPart = dayPart,
                 onSaveClick = {
-
                     navController.navigate(
                         Screen.MonthScreen.route
                     )

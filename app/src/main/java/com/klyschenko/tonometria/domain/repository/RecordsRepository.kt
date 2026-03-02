@@ -1,5 +1,6 @@
 package com.klyschenko.tonometria.domain.repository
 
+import com.klyschenko.tonometria.domain.entity.DayData
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.entity.Record
@@ -10,6 +11,8 @@ interface RecordsRepository {
     fun getAllMonthRecords(year: Int, month: Int): Flow<Map<Int, Map<DayPart, List<PressureData>>>>
 
     suspend fun addNewRecord(record: Record)
+
+    suspend fun getDayRecord(year: Int, month: Int, day: Int, wroteAt: DayPart): DayData
 
     suspend fun editRecord(year: Int, month: Int, day: Int, wroteAt: DayPart, toUpdate: ToUpdate)
 

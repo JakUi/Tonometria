@@ -44,11 +44,16 @@ import com.klyschenko.tonometria.presentation.ui.textfield.DigitOnlyInputTransfo
 @Composable
 fun CreateRecord(
     modifier: Modifier = Modifier,
-    viewModel: CreateRecordViewModel = hiltViewModel(),
     day: Int,
     dayPart: DayPart,
     onSaveClick: () -> Unit
 ) {
+    val viewModel: CreateRecordViewModel =
+        hiltViewModel<CreateRecordViewModel, CreateRecordViewModel.Factory>(
+            creationCallback = { factory ->
+                factory.create(day = day, wroteAt = dayPart)
+            }
+        )
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
