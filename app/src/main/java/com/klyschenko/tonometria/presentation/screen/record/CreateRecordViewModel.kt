@@ -2,11 +2,9 @@
 
 package com.klyschenko.tonometria.presentation.screen.record
 
-import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.klyschenko.tonometria.domain.entity.DayData
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.entity.Record
@@ -21,6 +19,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -65,34 +65,13 @@ class CreateRecordViewModel @AssistedInject constructor(
         ): CreateRecordViewModel
     }
 
-    private val record = MutableStateFlow<DayData?>(null)
-    private val upper = MutableStateFlow<String>("")
-    private val lower = MutableStateFlow<String>("")
-    private val pulse = MutableStateFlow<String>("")
-    private val comment = MutableStateFlow<String>("")
+    private val _screenState = MutableStateFlow<ScreenState>(ScreenState.Loading)
+    val screenState = _screenState.asStateFlow()
 
-    fun loadRecord(year: Int, month: Int, day: Int, wroteAt: DayPart) {
-        viewModelScope.launch {
-            record.value = getSingleRecordUseCase(year, month, day, wroteAt)
-            upperPressureState.edit {
-                replace(0, length, record.value?.data?.upperPressure?.toString().orEmpty())
-            }
-            lowerPressureState.edit {
-                replace(0, length, record.value?.data?.lowerPressure?.toString().orEmpty())
-            }
-            pulseState.edit {
-                replace(0, length, record.value?.data?.pulse?.toString().orEmpty())
-            }
-            commentState.edit {
-                replace(0, length, record.value?.data?.comment.orEmpty())
-            }
-        }
-    }
-
-    val upperPressureState = TextFieldState(upper.value)
-    val lowerPressureState = TextFieldState(lower.value)
-    val pulseState = TextFieldState(pulse.value)
-    val commentState = TextFieldState(comment.value)
+    val upperPressureState = TextFieldState()
+    val lowerPressureState = TextFieldState()
+    val pulseState = TextFieldState()
+    val commentState = TextFieldState()
 
     val isSaveEnabled: Boolean
         get() = upperPressureState.text.isNotBlank() &&
@@ -101,16 +80,28 @@ class CreateRecordViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            getMonthUseCase().collect { monthNumber ->
-                _dateState.update { previousState ->
-                    val newState = previousState.copy(
-                        month = monthNumber
-                    )
-                    newState
-                }
+            val monthNumber = getMonthUseCase().firstOrNull() ?: 1
+            _dateState.update { previousState ->
+                val newState = previousState.copy(
+                    month = monthNumber
+                )
+                newState
             }
+
+            val record = getSingleRecordUseCase(
+                year = selectedYear.value,
+                month = selectedMonth.value,
+                day = day,
+                wroteAt = wroteAt
+            )
+
+            _screenState.value = ScreenState.Content(
+                upper = record.data.upperPressure.toString(),
+                lower = record.data.lowerPressure.toString(),
+                pulse = record.data.pulse.toString(),
+                comment = record.data.comment.orEmpty()
+            )
         }
-        loadRecord(selectedYear.value, selectedMonth.value, day, wroteAt)
     }
 
     fun processCommand(command: RecordCommand) {
@@ -140,6 +131,16 @@ class CreateRecordViewModel @AssistedInject constructor(
         val year: Int,
         val month: Int
     )
+
+    sealed interface ScreenState {
+        data object Loading : ScreenState
+        data class Content(
+            val upper: String,
+            val lower: String,
+            val pulse: String,
+            val comment: String
+        ) : ScreenState
+    }
 
     sealed interface RecordCommand {
 
