@@ -2,7 +2,6 @@
 
 package com.klyschenko.tonometria.presentation.screen.record
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -123,7 +122,6 @@ fun CreateRecord(
                     viewModel.lowerPressureState.edit { replace(0, length, s.lower) }
                     viewModel.pulseState.edit { replace(0, length, s.pulse) }
                     viewModel.commentState.edit { replace(0, length, s.comment) }
-                    Log.d("DebugScreen", "${s.upper}")
                 }
                 Column(
                     modifier = Modifier

@@ -19,6 +19,9 @@ interface RecordsDao {
     @Query("SELECT day, wroteAt, upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day")
     fun getDayRecords(year: Int, month: Int, day: Int): Flow<List<DayDataDbModel>>
 
+    @Query("SELECT day, wroteAt, upperPressure, lowerPressure, pulse, comment FROM records WHERE year=:year AND month=:month AND day=:day AND wroteAt=:wroteAt")
+    fun getSingleRecord(year: Int, month: Int, day: Int, wroteAt: DayPart): Flow<List<DayDataDbModel>>
+
 //    @Query("SELECT recordId FROM records WHERE year=:year AND month=:month AND day=:day AND wroteAt=:wroteAt")
 //    fun getRecordId(year: Int, month: Int, day: Int, wroteAt: DayPart): Int?
 

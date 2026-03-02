@@ -1,7 +1,6 @@
 package com.klyschenko.tonometria.presentation.navigation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,7 +28,6 @@ fun NavGraph() {
                     )
                 },
                 onYearClick = {
-                    Log.d("Debug", "Clicked on Year:")
                     navController.navigate(Screen.YearScreen.route)
                 }
             )

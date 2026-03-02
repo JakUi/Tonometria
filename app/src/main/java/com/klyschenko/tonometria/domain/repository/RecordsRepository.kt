@@ -12,7 +12,7 @@ interface RecordsRepository {
 
     suspend fun addNewRecord(record: Record)
 
-    suspend fun getDayRecord(year: Int, month: Int, day: Int, wroteAt: DayPart): DayData
+    suspend fun getSingleRecord(year: Int, month: Int, day: Int, wroteAt: DayPart): DayData
 
     suspend fun editRecord(year: Int, month: Int, day: Int, wroteAt: DayPart, toUpdate: ToUpdate)
 

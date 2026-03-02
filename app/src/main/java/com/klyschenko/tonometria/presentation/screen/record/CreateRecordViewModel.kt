@@ -89,16 +89,16 @@ class CreateRecordViewModel @AssistedInject constructor(
             }
 
             val record = getSingleRecordUseCase(
-                year = selectedYear.value,
-                month = selectedMonth.value,
+                year = _dateState.value.year,
+                month = _dateState.value.month,
                 day = day,
                 wroteAt = wroteAt
             )
 
             _screenState.value = ScreenState.Content(
-                upper = record.data.upperPressure.toString(),
-                lower = record.data.lowerPressure.toString(),
-                pulse = record.data.pulse.toString(),
+                upper = record.data.upperPressure.let { if (it == 0) "" else it.toString() },
+                lower = record.data.lowerPressure.let { if (it == 0) "" else it.toString() },
+                pulse = record.data.pulse.let { if (it == 0) "" else it.toString() },
                 comment = record.data.comment.orEmpty()
             )
         }

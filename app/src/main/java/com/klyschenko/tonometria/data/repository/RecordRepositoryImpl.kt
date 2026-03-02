@@ -2,7 +2,6 @@
 
 package com.klyschenko.tonometria.data.repository
 
-import android.util.Log
 import com.klyschenko.tonometria.data.db.dao.RecordsDao
 import com.klyschenko.tonometria.data.mapper.toDayDataEntity
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
@@ -15,7 +14,6 @@ import com.klyschenko.tonometria.domain.entity.Record
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -61,14 +59,13 @@ class RecordsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getDayRecord(
+    override suspend fun getSingleRecord(
         year: Int,
         month: Int,
         day: Int,
         wroteAt: DayPart
     ): DayData {
-        Log.d("Debug", "year: $year, month: $month, day: $day")
-        val records = recordsDao.getDayRecords(year, month, day)     // Flow<List<DayDataDbModel>>
+        val records = recordsDao.getSingleRecord(year, month, day, wroteAt)     // Flow<List<DayDataDbModel>>
             .map { dbList -> dbList.toDayDataEntity() }       // Flow<List<DayData>>
             .map { list ->                                   // Flow<DayData?>
                 list.firstOrNull { it.wroteAt == wroteAt }    // если надо выбрать по wroteAt
@@ -78,13 +75,12 @@ class RecordsRepositoryImpl @Inject constructor(
             ?: DayData(                                       // fallback если эмиссий не было или список пустой
                 wroteAt = wroteAt,
                 data = PressureData(
-                    upperPressure = 120,
-                    lowerPressure = 80,
-                    pulse = 65,
+                    upperPressure = 0,
+                    lowerPressure = 0,
+                    pulse = 0,
                     comment = ""
                 )
             )
-        Log.d("Debug", records.toString())
         return records
     }
 
