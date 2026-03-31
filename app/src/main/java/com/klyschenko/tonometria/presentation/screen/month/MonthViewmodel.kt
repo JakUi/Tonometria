@@ -10,8 +10,10 @@ import com.klyschenko.tonometria.domain.repository.ToUpdate
 import com.klyschenko.tonometria.domain.usecase.DeleteRecordUseCase
 import com.klyschenko.tonometria.domain.usecase.EditRecordUseCase
 import com.klyschenko.tonometria.domain.usecase.GetAllMonthsRecordsUseCase
+import com.klyschenko.tonometria.domain.usecase.GetFontSizeUseCase
 import com.klyschenko.tonometria.domain.usecase.GetMonthUseCase
 import com.klyschenko.tonometria.domain.usecase.GetYearUseCase
+import com.klyschenko.tonometria.domain.usecase.SetFontSizeUseCase
 import com.klyschenko.tonometria.domain.usecase.SetMonthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +34,9 @@ class MonthViewmodel @Inject constructor(
     private val deleteRecordUseCase: DeleteRecordUseCase,
     private val setMonthUseCase: SetMonthUseCase,
     private val getMonthUseCase: GetMonthUseCase,
-    private val getYearUseCase: GetYearUseCase
+    private val getYearUseCase: GetYearUseCase,
+    private val getSelectedFontSizeUseCase: GetFontSizeUseCase,
+    private val setSelectedFontSizeUseCase: SetFontSizeUseCase
 ) : ViewModel() {
 
     private val selectedYear = getYearUseCase()
@@ -48,6 +52,20 @@ class MonthViewmodel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = 1
         )
+
+    private val selectedFontSize = getSelectedFontSizeUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 12
+        )
+
+    private val _settingsState = MutableStateFlow(
+        Settings(
+            fontSize = selectedFontSize.value
+        )
+    )
+    val settingsState =_settingsState.asStateFlow()
 
     private val _dateLoaded = MutableStateFlow(false)
     val dateLoaded = _dateLoaded.asStateFlow()
@@ -84,6 +102,18 @@ class MonthViewmodel @Inject constructor(
         }
     }
 
+    fun updateFontSize(size: Int) {
+        _settingsState.update { previousState ->
+            val newState = previousState.copy(
+                fontSize = size
+            )
+            viewModelScope.launch {
+                setSelectedFontSizeUseCase(size)
+            }
+            newState
+        }
+    }
+
     suspend fun loadRecords() {
         val map = getAllMonthsRecordsUseCase(
             year = dateState.value.year,
@@ -100,6 +130,11 @@ class MonthViewmodel @Inject constructor(
             updateMonth(monthNumber)
             loadRecords()
             _dateLoaded.update { true }
+            selectedFontSize.collect { fontSize ->
+                _settingsState.update { current ->
+                    current.copy(fontSize = fontSize)
+                }
+            }
         }
     }
 
@@ -127,6 +162,16 @@ class MonthViewmodel @Inject constructor(
                 viewModelScope.launch {
                     updateMonth(command.month)
                     loadRecords()
+                }
+            }
+        }
+    }
+
+    fun processSettingsCommand(command: SettingsCommand) {
+        when (command) {
+            is SettingsCommand.ChangeFontSize -> {
+                viewModelScope.launch {
+                    updateFontSize(size = command.fontSize)
                 }
             }
         }
@@ -168,9 +213,18 @@ data class DateState(
     val month: Int
 )
 
+data class Settings(
+    val fontSize: Int
+)
+
 sealed interface DateCommand {
 
     data class ChangeMonth(val month: Int) : DateCommand
+}
+
+sealed interface SettingsCommand {
+
+    data class ChangeFontSize(val fontSize: Int) : SettingsCommand
 }
 
 sealed interface CellCommand {

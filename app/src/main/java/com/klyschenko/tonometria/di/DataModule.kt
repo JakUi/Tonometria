@@ -6,8 +6,10 @@ import com.klyschenko.tonometria.data.db.dao.RecordsDao
 import com.klyschenko.tonometria.data.RecordsDatabase
 import com.klyschenko.tonometria.data.repository.DateRepositoryImpl
 import com.klyschenko.tonometria.data.repository.RecordsRepositoryImpl
+import com.klyschenko.tonometria.data.repository.SettingsRepositoryImpl
 import com.klyschenko.tonometria.domain.repository.DateRepository
 import com.klyschenko.tonometria.domain.repository.RecordsRepository
+import com.klyschenko.tonometria.domain.repository.SettingsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -32,6 +34,12 @@ interface DataModule {
     fun bindDateRepository(
         impl: DateRepositoryImpl
     ): DateRepository
+
+    @Binds
+    @Singleton
+    fun bindSettingsRepository(
+        impl: SettingsRepositoryImpl
+    ): SettingsRepository
 
     companion object {
         @Singleton

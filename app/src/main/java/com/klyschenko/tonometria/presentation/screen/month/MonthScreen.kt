@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -73,6 +74,7 @@ fun Month(
     onYearClick: () -> Unit
 ) {
     val dateState by viewModel.dateState.collectAsState()
+    val settingState by viewModel.settingsState.collectAsState()
     val dateLoadedState by viewModel.dateLoaded.collectAsState()
     val context = LocalContext.current
 
@@ -125,7 +127,32 @@ fun Month(
                         )
                     },
                     actions = {
-                        MonthDropdown(
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Dropdown(
+                            width = 92,
+                            options = listOf(
+                                "9",
+                                "10",
+                                "11",
+                                "12",
+                                "13",
+                                "14",
+                                "15"
+                            ),
+                            selected = settingState.fontSize.toString(),
+                            onSelected = {
+                                viewModel.processSettingsCommand(command =
+                                    SettingsCommand.ChangeFontSize(
+                                        fontSize = it.toIntOrNull() ?: 12
+                                    )
+                                )
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Dropdown(
                             options = listOf(
                                 stringResource(R.string.january),
                                 stringResource(R.string.february),
@@ -185,6 +212,7 @@ fun DayRow(
 ) {
     val rowShape = RoundedCornerShape(8.dp)
     val state = viewModel.state.collectAsState()
+    val settingsState by viewModel.settingsState.collectAsState()
     val monthState by viewModel.dateState.collectAsState()
 
     Column(
@@ -228,6 +256,7 @@ fun DayRow(
                 upperPressure = morningData.valueOf(DataType.UPPER),
                 lowerPressure = morningData.valueOf(DataType.LOWER),
                 pulse = morningData.valueOf(DataType.PULSE),
+                fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.MORNING)
                 },
@@ -247,6 +276,7 @@ fun DayRow(
                 upperPressure = dayData.valueOf(DataType.UPPER),
                 lowerPressure = dayData.valueOf(DataType.LOWER),
                 pulse = dayData.valueOf(DataType.PULSE),
+                fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.DAY)
                 },
@@ -266,6 +296,7 @@ fun DayRow(
                 upperPressure = eveningData.valueOf(DataType.UPPER),
                 lowerPressure = eveningData.valueOf(DataType.LOWER),
                 pulse = eveningData.valueOf(DataType.PULSE),
+                fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.EVENING)
                 },
@@ -290,6 +321,7 @@ fun Cell(
     upperPressure: String,
     lowerPressure: String,
     pulse: String,
+    fontSize: Int,
     onCellClick: () -> Unit,
     onCellLongClick: () -> Unit
 ) {
@@ -317,29 +349,29 @@ fun Cell(
                     modifier = Modifier
                         .padding(4.dp),
                     text = upperPressure,
-                    fontSize = 12.sp
+                    fontSize = fontSize.sp
                 )
                 Text(
                     modifier = Modifier,
                     text = "/",
-                    fontSize = 12.sp
+                    fontSize = fontSize.sp
                 )
                 Text(
                     modifier = Modifier
                         .padding(4.dp),
                     text = lowerPressure,
-                    fontSize = 12.sp
+                    fontSize = fontSize.sp
                 )
                 Text(
                     modifier = Modifier,
                     text = " ",
-                    fontSize = 12.sp
+                    fontSize = fontSize.sp
                 )
                 Text(
                     modifier = Modifier
                         .padding(4.dp),
                     text = pulse,
-                    fontSize = 12.sp
+                    fontSize = fontSize.sp
                 )
             }
         }
@@ -347,17 +379,19 @@ fun Cell(
 }
 
 @Composable
-fun MonthDropdown(
+fun Dropdown(
     options: List<String>,
     selected: String,
+    width: Int = 152,
+    height: Int = 56,
     onSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         modifier = Modifier
-            .width(152.dp)
-            .height(56.dp),
+            .width(width.dp)
+            .height(height.dp),
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
