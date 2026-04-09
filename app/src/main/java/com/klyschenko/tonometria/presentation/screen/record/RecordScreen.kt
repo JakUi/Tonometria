@@ -2,17 +2,22 @@
 
 package com.klyschenko.tonometria.presentation.screen.record
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
@@ -32,8 +37,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,8 +51,15 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.klyschenko.tonometria.R
+import com.klyschenko.tonometria.di.DataModule
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.presentation.ui.textfield.DigitOnlyInputTransformation
+import com.klyschenko.tonometria.presentation.ui.theme.Aquamarine
+import com.klyschenko.tonometria.presentation.ui.theme.Blue
+import com.klyschenko.tonometria.presentation.ui.theme.CarmineRed
+import com.klyschenko.tonometria.presentation.ui.theme.Mustard
+import com.klyschenko.tonometria.presentation.ui.theme.Peach40
+import com.klyschenko.tonometria.presentation.ui.theme.Peach80
 
 @Composable
 fun CreateRecord(
@@ -186,6 +200,32 @@ fun CreateRecord(
                             state = viewModel.commentState,
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .height(60.dp)
+                    ) {
+                        AddColor(backgroundColor = Peach80, onClick = { })
+
+                        AddColor(backgroundColor = Peach40, onClick = { })
+
+                        AddColor(backgroundColor = Aquamarine, onClick = { })
+
+                        AddColor(backgroundColor = Blue, onClick = { })
+
+                        AddColor(backgroundColor = Mustard, onClick = { })
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .height(60.dp)
+                    ) {
+                        AddColor(backgroundColor = CarmineRed, onClick = { })
+                    }
                 }
             }
 
@@ -235,4 +275,25 @@ fun Field(
             content()
         }
     }
+}
+
+@Composable
+fun AddColor(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color,
+    onClick: () -> Unit
+) {
+    Spacer(modifier = Modifier.width(16.dp))
+    Box(
+        modifier = Modifier
+            .size(50.dp)
+            .clip(CircleShape)
+            .background(color = backgroundColor)
+            .clickable(
+                enabled = true,
+                onClick = {
+                    onClick()
+                }
+            )
+    )
 }
