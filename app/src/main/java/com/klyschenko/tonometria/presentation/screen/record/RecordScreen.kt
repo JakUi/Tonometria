@@ -3,6 +3,7 @@
 package com.klyschenko.tonometria.presentation.screen.record
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +55,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.klyschenko.tonometria.R
-import com.klyschenko.tonometria.di.DataModule
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.presentation.ui.textfield.DigitOnlyInputTransformation
 import com.klyschenko.tonometria.presentation.ui.theme.Aquamarine
@@ -60,6 +63,7 @@ import com.klyschenko.tonometria.presentation.ui.theme.CarmineRed
 import com.klyschenko.tonometria.presentation.ui.theme.Mustard
 import com.klyschenko.tonometria.presentation.ui.theme.Peach40
 import com.klyschenko.tonometria.presentation.ui.theme.Peach80
+import com.klyschenko.tonometria.presentation.ui.theme.Purple40
 
 @Composable
 fun CreateRecord(
@@ -203,20 +207,30 @@ fun CreateRecord(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    var selectedIndex by remember { mutableIntStateOf(-1) }
+                    val colors = listOf(
+                        Peach80,
+                        Peach40,
+                        Aquamarine,
+                        Blue,
+                        Mustard
+                    )
+
                     Row(
                         modifier = Modifier
                             .padding(4.dp)
                             .height(60.dp)
                     ) {
-                        AddColor(backgroundColor = Peach80, onClick = { })
+                        colors.forEachIndexed { index, color ->
+                            AddColor(
+                                backgroundColor = color,
+                                isSelected = selectedIndex == index,
+                                onClick = {
+                                    selectedIndex = index
 
-                        AddColor(backgroundColor = Peach40, onClick = { })
-
-                        AddColor(backgroundColor = Aquamarine, onClick = { })
-
-                        AddColor(backgroundColor = Blue, onClick = { })
-
-                        AddColor(backgroundColor = Mustard, onClick = { })
+                                }
+                            )
+                        }
                     }
 
                     Row(
@@ -224,7 +238,11 @@ fun CreateRecord(
                             .padding(4.dp)
                             .height(60.dp)
                     ) {
-                        AddColor(backgroundColor = CarmineRed, onClick = { })
+                        AddColor(
+                            backgroundColor = CarmineRed,
+                            isSelected = selectedIndex == 5,
+                            onClick = { selectedIndex = 5 }
+                        )
                     }
                 }
             }
@@ -281,19 +299,21 @@ fun Field(
 fun AddColor(
     modifier: Modifier = Modifier,
     backgroundColor: Color,
+    isSelected: Boolean,
     onClick: () -> Unit
 ) {
     Spacer(modifier = Modifier.width(16.dp))
+
     Box(
         modifier = Modifier
             .size(50.dp)
             .clip(CircleShape)
-            .background(color = backgroundColor)
-            .clickable(
-                enabled = true,
-                onClick = {
-                    onClick()
-                }
+            .border(
+                5.dp,
+                if (isSelected) Purple40 else backgroundColor,
+                CircleShape
             )
+            .background(backgroundColor, CircleShape)
+            .clickable { onClick() }
     )
 }
