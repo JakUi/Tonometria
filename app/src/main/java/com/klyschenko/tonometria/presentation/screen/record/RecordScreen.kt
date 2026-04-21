@@ -36,9 +36,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.klyschenko.tonometria.R
 import com.klyschenko.tonometria.domain.entity.DayPart
+import com.klyschenko.tonometria.presentation.mapper.ColorIndex
 import com.klyschenko.tonometria.presentation.ui.textfield.DigitOnlyInputTransformation
 import com.klyschenko.tonometria.presentation.ui.theme.Aquamarine
 import com.klyschenko.tonometria.presentation.ui.theme.Blue
@@ -79,6 +77,8 @@ fun CreateRecord(
                 factory.create(day = day, wroteAt = dayPart)
             }
         )
+
+    val colorState by viewModel.commentColorState.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -210,7 +210,6 @@ fun CreateRecord(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    var selectedIndex by remember { mutableIntStateOf(-1) }
                     val colors = listOf(
                         Peach80,
                         Peach40,
@@ -224,26 +223,50 @@ fun CreateRecord(
                             .padding(4.dp)
                             .height(60.dp)
                     ) {
+                        val selectedIndex = ColorIndex.entries.find { it.colorInInt == colorState }
+                        var selectedColorIndex = when (selectedIndex) {
+                            ColorIndex.FIRST -> 0
+                            ColorIndex.SECOND -> 1
+                            ColorIndex.THIRD -> 2
+                            ColorIndex.FOURTH -> 3
+                            ColorIndex.FIFTH -> 4
+                            ColorIndex.SIXTH -> 5
+                            null -> -1
+                        }
                         colors.forEachIndexed { index, color ->
                             AddColor(
                                 backgroundColor = color,
-                                isSelected = selectedIndex == index,
+                                isSelected = selectedColorIndex == index,
                                 onClick = {
-                                    selectedIndex = index
-                                    viewModel.commentColorState.value = color.toArgb()                                }
+                                    selectedColorIndex = index
+                                    viewModel.commentColorState.value = color.toArgb()
+                                }
                             )
                         }
                     }
-
+                    // TODO: Отрефакторить этот кусок!!!!!
                     Row(
                         modifier = Modifier
                             .padding(4.dp)
                             .height(60.dp)
                     ) {
+                        val selectedIndex = ColorIndex.entries.find { it.colorInInt == colorState }
+                        var selectedColorIndex = when (selectedIndex) {
+                            ColorIndex.FIRST -> 0
+                            ColorIndex.SECOND -> 1
+                            ColorIndex.THIRD -> 2
+                            ColorIndex.FOURTH -> 3
+                            ColorIndex.FIFTH -> 4
+                            ColorIndex.SIXTH -> 5
+                            null -> -1
+                        }
                         AddColor(
                             backgroundColor = CarmineRed,
-                            isSelected = selectedIndex == 5,
-                            onClick = { selectedIndex = 5 }
+                            isSelected = selectedColorIndex == 5,
+                            onClick = {
+                                viewModel.commentColorState.value = CarmineRed.toArgb()
+                                selectedColorIndex = 5
+                            }
                         )
                     }
                 }

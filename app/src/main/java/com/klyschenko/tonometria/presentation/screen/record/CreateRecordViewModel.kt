@@ -2,6 +2,7 @@
 
 package com.klyschenko.tonometria.presentation.screen.record
 
+import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -100,8 +101,11 @@ class CreateRecordViewModel @AssistedInject constructor(
                 upper = record.data.upperPressure.let { if (it == 0) "" else it.toString() },
                 lower = record.data.lowerPressure.let { if (it == 0) "" else it.toString() },
                 pulse = record.data.pulse.let { if (it == 0) "" else it.toString() },
-                comment = record.data.comment.orEmpty()
+                comment = record.data.comment.orEmpty(),
+                commentColor = record.data.commentColor
             )
+            commentColorState.update {  record.data.commentColor }
+            Log.d("Debug", "Record data commentColor: ${record.data.commentColor}")
         }
     }
 
@@ -140,7 +144,8 @@ class CreateRecordViewModel @AssistedInject constructor(
             val upper: String,
             val lower: String,
             val pulse: String,
-            val comment: String
+            val comment: String,
+            val commentColor: Int?
         ) : ScreenState
     }
 
