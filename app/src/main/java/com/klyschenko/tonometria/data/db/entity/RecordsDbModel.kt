@@ -5,8 +5,11 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.klyschenko.tonometria.domain.entity.DayPart
 
-@Entity(tableName = "records",
-    indices = [Index("recordId")]
+@Entity(
+    tableName = "records",
+    indices = [
+        Index(value = ["year", "month", "day", "wroteAt"], unique = true)
+    ]
 )
 data class RecordsDbModel(
     @PrimaryKey(autoGenerate = true) val recordId: Int = 0,
