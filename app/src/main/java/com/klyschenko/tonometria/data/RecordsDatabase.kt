@@ -9,7 +9,7 @@ import com.klyschenko.tonometria.data.db.entity.RecordsDbModel
 
 @Database(
     entities = [RecordsDbModel::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(DayPartConverter::class)

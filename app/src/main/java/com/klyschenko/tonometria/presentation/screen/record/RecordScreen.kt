@@ -45,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -100,6 +101,7 @@ fun CreateRecord(
                         viewModel.lowerPressureState.text.toString().toIntOrNull() ?: return@Button
                     val pulse = viewModel.pulseState.text.toString().toIntOrNull() ?: return@Button
                     val comment = viewModel.commentState.text
+                    val commentColor = viewModel.commentColorState.value
                     viewModel.processCommand(
                         CreateRecordViewModel.RecordCommand.Create(
                             day = day,
@@ -107,7 +109,8 @@ fun CreateRecord(
                             upperPressure = upper,
                             lowerPressure = lower,
                             pulse = pulse,
-                            comment = comment.toString()
+                            comment = comment.toString(),
+                            commentColor = commentColor
                         )
                     )
                     onSaveClick()
@@ -227,8 +230,7 @@ fun CreateRecord(
                                 isSelected = selectedIndex == index,
                                 onClick = {
                                     selectedIndex = index
-
-                                }
+                                    viewModel.commentColorState.value = color.toArgb()                                }
                             )
                         }
                     }

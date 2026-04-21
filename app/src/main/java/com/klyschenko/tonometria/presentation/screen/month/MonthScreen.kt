@@ -58,6 +58,7 @@ import coil3.compose.AsyncImage
 import com.klyschenko.tonometria.R
 import com.klyschenko.tonometria.domain.entity.DayPart
 import com.klyschenko.tonometria.domain.pressureData.DataType
+import com.klyschenko.tonometria.domain.pressureData.colorValue
 import com.klyschenko.tonometria.domain.pressureData.valueOf
 import com.klyschenko.tonometria.presentation.mapper.asString
 import com.klyschenko.tonometria.presentation.util.getMonthName
@@ -256,6 +257,7 @@ fun DayRow(
                 upperPressure = morningData.valueOf(DataType.UPPER),
                 lowerPressure = morningData.valueOf(DataType.LOWER),
                 pulse = morningData.valueOf(DataType.PULSE),
+                cellColor = morningData.colorValue(),
                 fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.MORNING)
@@ -276,6 +278,7 @@ fun DayRow(
                 upperPressure = dayData.valueOf(DataType.UPPER),
                 lowerPressure = dayData.valueOf(DataType.LOWER),
                 pulse = dayData.valueOf(DataType.PULSE),
+                cellColor = dayData.colorValue(),
                 fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.DAY)
@@ -296,6 +299,7 @@ fun DayRow(
                 upperPressure = eveningData.valueOf(DataType.UPPER),
                 lowerPressure = eveningData.valueOf(DataType.LOWER),
                 pulse = eveningData.valueOf(DataType.PULSE),
+                cellColor = eveningData.colorValue(),
                 fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.EVENING)
@@ -321,15 +325,17 @@ fun Cell(
     upperPressure: String,
     lowerPressure: String,
     pulse: String,
+    cellColor: Int?,
     fontSize: Int,
     onCellClick: () -> Unit,
     onCellLongClick: () -> Unit
 ) {
+
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = if (cellColor == null) MaterialTheme.colorScheme.surface else Color(cellColor)
         ),
     ) {
         Box(

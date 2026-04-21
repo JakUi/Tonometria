@@ -28,7 +28,8 @@ fun Record.toDbModel(): RecordsDbModel {
         upperPressure = data.upperPressure,
         lowerPressure = data.lowerPressure,
         pulse = data.pulse,
-        comment = data.comment ?: ""
+        comment = data.comment ?: "",
+        commentColor = data.commentColor
     )
 }
 
@@ -40,7 +41,8 @@ fun List<DayDataDbModel>.toDayDataEntity(): List<DayData> {
                 upperPressure = dayDataDbModel.data.upperPressure,
                 lowerPressure = dayDataDbModel.data.lowerPressure,
                 pulse = dayDataDbModel.data.pulse,
-                comment = dayDataDbModel.data.comment
+                comment = dayDataDbModel.data.comment,
+                commentColor = dayDataDbModel.data.commentColor
             )
         )
     }
@@ -51,5 +53,6 @@ fun PressureDataDbModel.toEntity(): PressureData =
         upperPressure = upperPressure,
         lowerPressure = lowerPressure,
         pulse = pulse,
-        comment = comment
+        comment = comment,
+        commentColor = commentColor
     )

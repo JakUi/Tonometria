@@ -78,7 +78,8 @@ class RecordsRepositoryImpl @Inject constructor(
                     upperPressure = 0,
                     lowerPressure = 0,
                     pulse = 0,
-                    comment = ""
+                    comment = "",
+                    commentColor = null
                 )
             )
         return records

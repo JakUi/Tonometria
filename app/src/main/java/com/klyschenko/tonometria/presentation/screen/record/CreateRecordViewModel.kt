@@ -72,6 +72,7 @@ class CreateRecordViewModel @AssistedInject constructor(
     val lowerPressureState = TextFieldState()
     val pulseState = TextFieldState()
     val commentState = TextFieldState()
+    val commentColorState = MutableStateFlow<Int>(0x00FFFFFF)
 
     val isSaveEnabled: Boolean
         get() = upperPressureState.text.isNotBlank() &&
@@ -118,7 +119,8 @@ class CreateRecordViewModel @AssistedInject constructor(
                                 upperPressure = command.upperPressure,
                                 lowerPressure = command.lowerPressure,
                                 pulse = command.pulse,
-                                comment = command.comment
+                                comment = command.comment,
+                                commentColor = command.commentColor
                             )
                         )
                     )
@@ -150,7 +152,8 @@ class CreateRecordViewModel @AssistedInject constructor(
             val upperPressure: Int,
             val lowerPressure: Int,
             val pulse: Int,
-            val comment: String
+            val comment: String,
+            val commentColor: Int
         ) : RecordCommand
     }
 }
