@@ -94,6 +94,16 @@ fun CreateRecord(
                     .imePadding() // поднимет кнопку над клавиатурой
                     .padding(horizontal = 24.dp)
                     .fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                enabled = viewModel.isSaveEnabled,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(
+                        alpha = 0.1f
+                    ),
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 onClick = {
                     val upper =
                         viewModel.upperPressureState.text.toString().toIntOrNull() ?: return@Button
@@ -114,17 +124,7 @@ fun CreateRecord(
                         )
                     )
                     onSaveClick()
-                },
-                shape = RoundedCornerShape(10.dp),
-                enabled = viewModel.isSaveEnabled,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(
-                        alpha = 0.1f
-                    ),
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    disabledContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                }
             ) {
                 Text(
                     text = stringResource(R.string.save),
@@ -212,7 +212,8 @@ fun CreateRecord(
 
                     val colors = listOf(
                         Peach80,
-                        Peach40,
+//                        Peach40,
+                        CarmineRed,
                         Aquamarine,
                         Blue,
                         Mustard
@@ -230,7 +231,7 @@ fun CreateRecord(
                             ColorIndex.THIRD -> 2
                             ColorIndex.FOURTH -> 3
                             ColorIndex.FIFTH -> 4
-                            ColorIndex.SIXTH -> 5
+//                            ColorIndex.SIXTH -> 5
                             null -> -1
                         }
                         colors.forEachIndexed { index, color ->
@@ -244,31 +245,31 @@ fun CreateRecord(
                             )
                         }
                     }
-                    // TODO: Отрефакторить этот кусок!!!!!
-                    Row(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .height(60.dp)
-                    ) {
-                        val selectedIndex = ColorIndex.entries.find { it.colorInInt == colorState }
-                        var selectedColorIndex = when (selectedIndex) {
-                            ColorIndex.FIRST -> 0
-                            ColorIndex.SECOND -> 1
-                            ColorIndex.THIRD -> 2
-                            ColorIndex.FOURTH -> 3
-                            ColorIndex.FIFTH -> 4
-                            ColorIndex.SIXTH -> 5
-                            null -> -1
-                        }
-                        AddColor(
-                            backgroundColor = CarmineRed,
-                            isSelected = selectedColorIndex == 5,
-                            onClick = {
-                                viewModel.commentColorState.value = CarmineRed.toArgb()
-                                selectedColorIndex = 5
-                            }
-                        )
-                    }
+//                    // TODO: Отрефакторить этот кусок!!!!!
+//                    Row(
+//                        modifier = Modifier
+//                            .padding(4.dp)
+//                            .height(60.dp)
+//                    ) {
+//                        val selectedIndex = ColorIndex.entries.find { it.colorInInt == colorState }
+//                        var selectedColorIndex = when (selectedIndex) {
+//                            ColorIndex.FIRST -> 0
+//                            ColorIndex.SECOND -> 1
+//                            ColorIndex.THIRD -> 2
+//                            ColorIndex.FOURTH -> 3
+//                            ColorIndex.FIFTH -> 4
+//                            ColorIndex.SIXTH -> 5
+//                            null -> -1
+//                        }
+//                        AddColor(
+//                            backgroundColor = CarmineRed,
+//                            isSelected = selectedColorIndex == 5,
+//                            onClick = {
+//                                viewModel.commentColorState.value = CarmineRed.toArgb()
+//                                selectedColorIndex = 5
+//                            }
+//                        )
+//                    }
                 }
             }
 

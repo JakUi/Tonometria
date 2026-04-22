@@ -29,7 +29,8 @@ fun NavGraph() {
                 },
                 onYearClick = {
                     navController.navigate(Screen.YearScreen.route)
-                }
+                },
+                navController = navController
             )
         }
         composable(Screen.CreateRecordScreen.route) {
@@ -39,9 +40,10 @@ fun NavGraph() {
                 day = day,
                 dayPart = dayPart,
                 onSaveClick = {
-                    navController.navigate(
-                        Screen.MonthScreen.route
-                    )
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("refresh_month", true)
+                    navController.popBackStack()
                 }
             )
         }

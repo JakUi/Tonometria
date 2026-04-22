@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +56,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.klyschenko.tonometria.R
 import com.klyschenko.tonometria.domain.entity.DayPart
@@ -71,6 +75,7 @@ import kotlin.Unit
 @Composable
 fun Month(
     viewModel: MonthViewmodel = hiltViewModel(),
+    navController: NavController,
     onCellClick: (day: Int, dayPart: DayPart) -> Unit,
     onYearClick: () -> Unit
 ) {
@@ -177,10 +182,29 @@ fun Month(
                 )
             }
         ) { innerPadding ->
+
+                val listState = rememberSaveable(saver = LazyListState.Saver) {
+                    LazyListState()
+                }
+
+                val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+                val shouldRefresh by savedStateHandle
+                    ?.getStateFlow("refresh_month", false)
+                    ?.collectAsStateWithLifecycle()
+                    ?: remember { mutableStateOf(false) }
+
+                LaunchedEffect(shouldRefresh) {
+                    if (shouldRefresh) {
+                        viewModel.loadRecords()
+                        savedStateHandle?.set("refresh_month", false)
+                    }
+                }
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
+                state = listState,
                 contentPadding = PaddingValues(
                     top = 24.dp,
                     start = 16.dp,
