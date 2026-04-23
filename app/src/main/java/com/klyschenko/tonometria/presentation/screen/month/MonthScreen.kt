@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -61,6 +62,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.klyschenko.tonometria.R
 import com.klyschenko.tonometria.domain.entity.DayPart
+import com.klyschenko.tonometria.domain.entity.PressureData
 import com.klyschenko.tonometria.domain.pressureData.DataType
 import com.klyschenko.tonometria.domain.pressureData.colorValue
 import com.klyschenko.tonometria.domain.pressureData.valueOf
@@ -148,10 +150,11 @@ fun Month(
                             ),
                             selected = settingState.fontSize.toString(),
                             onSelected = {
-                                viewModel.processSettingsCommand(command =
-                                    SettingsCommand.ChangeFontSize(
-                                        fontSize = it.toIntOrNull() ?: 12
-                                    )
+                                viewModel.processSettingsCommand(
+                                    command =
+                                        SettingsCommand.ChangeFontSize(
+                                            fontSize = it.toIntOrNull() ?: 12
+                                        )
                                 )
                             }
                         )
@@ -183,22 +186,22 @@ fun Month(
             }
         ) { innerPadding ->
 
-                val listState = rememberSaveable(saver = LazyListState.Saver) {
-                    LazyListState()
-                }
+            val listState = rememberSaveable(saver = LazyListState.Saver) {
+                LazyListState()
+            }
 
-                val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-                val shouldRefresh by savedStateHandle
-                    ?.getStateFlow("refresh_month", false)
-                    ?.collectAsStateWithLifecycle()
-                    ?: remember { mutableStateOf(false) }
+            val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+            val shouldRefresh by savedStateHandle
+                ?.getStateFlow("refresh_month", false)
+                ?.collectAsStateWithLifecycle()
+                ?: remember { mutableStateOf(false) }
 
-                LaunchedEffect(shouldRefresh) {
-                    if (shouldRefresh) {
-                        viewModel.loadRecords()
-                        savedStateHandle?.set("refresh_month", false)
-                    }
+            LaunchedEffect(shouldRefresh) {
+                if (shouldRefresh) {
+                    viewModel.loadRecords()
+                    savedStateHandle?.set("refresh_month", false)
                 }
+            }
 
             LazyColumn(
                 modifier = Modifier
@@ -276,12 +279,15 @@ fun DayRow(
             val morningData = state.value[index]?.get(DayPart.MORNING)
             val dayData = state.value[index]?.get(DayPart.DAY)
             val eveningData = state.value[index]?.get(DayPart.EVENING)
+            val morningDataCommentColor = getCellColor(morningData)
+            val dayDataDataCommentColor = getCellColor(dayData)
+            val eveningDataCommentColor = getCellColor(eveningData)
             Cell(
                 modifier = Modifier.weight(1f),
                 upperPressure = morningData.valueOf(DataType.UPPER),
                 lowerPressure = morningData.valueOf(DataType.LOWER),
                 pulse = morningData.valueOf(DataType.PULSE),
-                cellColor = morningData.colorValue(),
+                cellColor = morningDataCommentColor,
                 fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.MORNING)
@@ -302,7 +308,7 @@ fun DayRow(
                 upperPressure = dayData.valueOf(DataType.UPPER),
                 lowerPressure = dayData.valueOf(DataType.LOWER),
                 pulse = dayData.valueOf(DataType.PULSE),
-                cellColor = dayData.colorValue(),
+                cellColor = dayDataDataCommentColor,
                 fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.DAY)
@@ -323,7 +329,7 @@ fun DayRow(
                 upperPressure = eveningData.valueOf(DataType.UPPER),
                 lowerPressure = eveningData.valueOf(DataType.LOWER),
                 pulse = eveningData.valueOf(DataType.PULSE),
-                cellColor = eveningData.colorValue(),
+                cellColor = eveningDataCommentColor,
                 fontSize = settingsState.fontSize,
                 onCellClick = {
                     onCellClick(index, DayPart.EVENING)
@@ -344,12 +350,17 @@ fun DayRow(
 }
 
 @Composable
+fun getCellColor(data: List<PressureData>?): Int {
+    return data.colorValue() ?: MaterialTheme.colorScheme.surface.toArgb()
+}
+
+@Composable
 fun Cell(
     modifier: Modifier = Modifier,
     upperPressure: String,
     lowerPressure: String,
     pulse: String,
-    cellColor: Int?,
+    cellColor: Int,
     fontSize: Int,
     onCellClick: () -> Unit,
     onCellLongClick: () -> Unit
@@ -359,7 +370,7 @@ fun Cell(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (cellColor == null) MaterialTheme.colorScheme.surface else Color(cellColor)
+            containerColor = Color(cellColor)
         ),
     ) {
         Box(
