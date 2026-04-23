@@ -242,7 +242,7 @@ fun DayRow(
     val state = viewModel.state.collectAsState()
     val settingsState by viewModel.settingsState.collectAsState()
     val monthState by viewModel.dateState.collectAsState()
-
+    val defaultColor: Int = MaterialTheme.colorScheme.surface.toArgb()
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -279,9 +279,9 @@ fun DayRow(
             val morningData = state.value[index]?.get(DayPart.MORNING)
             val dayData = state.value[index]?.get(DayPart.DAY)
             val eveningData = state.value[index]?.get(DayPart.EVENING)
-            val morningDataCommentColor = getCellColor(morningData)
-            val dayDataDataCommentColor = getCellColor(dayData)
-            val eveningDataCommentColor = getCellColor(eveningData)
+            val morningDataCommentColor = getCellColor(morningData, defaultColor)
+            val dayDataDataCommentColor = getCellColor(dayData, defaultColor)
+            val eveningDataCommentColor = getCellColor(eveningData, defaultColor)
             Cell(
                 modifier = Modifier.weight(1f),
                 upperPressure = morningData.valueOf(DataType.UPPER),
@@ -349,9 +349,8 @@ fun DayRow(
     }
 }
 
-@Composable
-fun getCellColor(data: List<PressureData>?): Int {
-    return data.colorValue() ?: MaterialTheme.colorScheme.surface.toArgb()
+fun getCellColor(data: List<PressureData>?, defaultColor: Int): Int {
+    return data.colorValue() ?: defaultColor
 }
 
 @Composable
