@@ -20,4 +20,8 @@
     <string name="pulse">Pulse</string>
     <string name="add_data">Add data</string>
     <string name="comment">Comment</string>
+    <string name="removing_record_title">Removing</string>
+    <string name="remove_record">Remove record?</string>
+    <string name="confirm">Yes</string>
+    <string name="cancel">No</string>
 </resources>

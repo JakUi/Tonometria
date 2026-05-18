@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -37,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +69,8 @@ import com.klyschenko.tonometria.domain.pressureData.DataType
 import com.klyschenko.tonometria.domain.pressureData.colorValue
 import com.klyschenko.tonometria.domain.pressureData.valueOf
 import com.klyschenko.tonometria.presentation.mapper.asString
+import com.klyschenko.tonometria.presentation.mapper.fontSizeToPercent
+import com.klyschenko.tonometria.presentation.mapper.mapPercentToFontSize
 import com.klyschenko.tonometria.presentation.util.getMonthName
 import com.klyschenko.tonometria.presentation.util.getMonthNumber
 import com.klyschenko.tonometria.presentation.util.getYearAsString
@@ -138,22 +142,22 @@ fun Month(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Dropdown(
-                            width = 92,
+                            width = 108,
                             options = listOf(
-                                "9",
-                                "10",
-                                "11",
-                                "12",
-                                "13",
-                                "14",
-                                "15"
+                                "70%",
+                                "80%",
+                                "90%",
+                                "100%",
+                                "110%",
+                                "120%",
+                                "130%"
                             ),
-                            selected = settingState.fontSize.toString(),
+                            selected = fontSizeToPercent(settingState.fontSize),
                             onSelected = {
                                 viewModel.processSettingsCommand(
                                     command =
                                         SettingsCommand.ChangeFontSize(
-                                            fontSize = it.toIntOrNull() ?: 12
+                                            fontSize = mapPercentToFontSize(it)
                                         )
                                 )
                             }
@@ -362,23 +366,57 @@ fun Cell(
     cellColor: Int,
     fontSize: Int,
     onCellClick: () -> Unit,
-    onCellLongClick: () -> Unit
+    onCellLongClick: () -> Unit,
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+            },
+            title = {
+                Text(stringResource(R.string.removing_record_title))
+            },
+            text = {
+                Text(stringResource(R.string.remove_record))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        onCellLongClick()
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 
     Card(
-        modifier = modifier,
+        modifier = modifier.combinedClickable(
+            onClick = onCellClick,
+            onLongClick = {
+                showDialog = true
+            }
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(cellColor)
         ),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .combinedClickable(
-                    onClick = onCellClick,
-                    onLongClick = onCellLongClick
-                ),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Row(

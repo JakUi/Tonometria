@@ -21,4 +21,8 @@
     <string name="pulse">Пульс</string>
     <string name="add_data">Добавить данные</string>
     <string name="comment">Комментарий</string>
+    <string name="removing_record_title">Удаление</string>
+    <string name="remove_record">Удалить запись?</string>
+    <string name="confirm">Да</string>
+    <string name="cancel">Нет</string>
 </resources>
