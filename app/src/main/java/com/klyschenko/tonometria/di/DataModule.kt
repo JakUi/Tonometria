@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.klyschenko.tonometria.data.db.dao.RecordsDao
 import com.klyschenko.tonometria.data.RecordsDatabase
+import com.klyschenko.tonometria.data.RecordsDatabase.Companion.MIGRATION_5_6
+import com.klyschenko.tonometria.data.RecordsDatabase.Companion.MIGRATION_6_7
+import com.klyschenko.tonometria.data.RecordsDatabase.Companion.MIGRATION_7_8
+import com.klyschenko.tonometria.data.RecordsDatabase.Companion.MIGRATION_8_9
 import com.klyschenko.tonometria.data.repository.DateRepositoryImpl
 import com.klyschenko.tonometria.data.repository.RecordsRepositoryImpl
 import com.klyschenko.tonometria.data.repository.SettingsRepositoryImpl
@@ -51,7 +55,12 @@ interface DataModule {
                 context = context,
                 klass = RecordsDatabase::class.java,
                 name = "records.db"
-            ).fallbackToDestructiveMigration(dropAllTables = true).build()
+            )
+                .addMigrations(MIGRATION_5_6)
+                .addMigrations(MIGRATION_6_7)
+                .addMigrations(MIGRATION_7_8)
+                .addMigrations(MIGRATION_8_9)
+                .build()
         }
 
         @Singleton
