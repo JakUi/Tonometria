@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -120,8 +122,8 @@ fun Month(
                         }
                         OutlinedTextField(
                             modifier = Modifier
-                                .width(80.dp)
-                                .height(56.dp)
+                                .widthIn(min = 40.dp, max = 80.dp)
+                                .heightIn(min = 26.dp, max = 56.dp)
                                 .clickable(
                                     enabled = true,
                                     onClick = onYearClick
@@ -133,7 +135,7 @@ fun Month(
                             interactionSource = interactionSource,
                             lineLimits = TextFieldLineLimits.SingleLine,
                             textStyle = TextStyle(
-                                fontSize = 20.sp
+                                fontSize = settingState.fontSize.sp
                             ),
                             shape = RoundedCornerShape(12.dp),
                         )
@@ -142,7 +144,10 @@ fun Month(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Dropdown(
-                            width = 108,
+                            modifier = Modifier
+                                .widthIn(min = 40.dp, max = 108.dp)
+                                .heightIn(min = 26.dp, max = 56.dp),
+                            fontSize = settingState.fontSize,
                             options = listOf(
                                 "70%",
                                 "80%",
@@ -166,6 +171,9 @@ fun Month(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Dropdown(
+                            modifier = Modifier
+                                .widthIn(min = 40.dp, max = 150.dp)
+                                .heightIn(min = 26.dp, max = 56.dp),
                             options = listOf(
                                 stringResource(R.string.january),
                                 stringResource(R.string.february),
@@ -180,6 +188,7 @@ fun Month(
                                 stringResource(R.string.november),
                                 stringResource(R.string.december)
                             ),
+                            fontSize = settingState.fontSize,
                             selected = dateState.month.getMonthName().asString(context),
                             onSelected = {
                                 viewModel.processDateCommand(command = DateCommand.ChangeMonth(month = it.getMonthNumber()))
@@ -242,7 +251,6 @@ fun DayRow(
     viewModel: MonthViewmodel,
     onCellClick: (day: Int, dayPart: DayPart) -> Unit
 ) {
-    val rowShape = RoundedCornerShape(8.dp)
     val state = viewModel.state.collectAsState()
     val settingsState by viewModel.settingsState.collectAsState()
     val monthState by viewModel.dateState.collectAsState()
@@ -253,19 +261,14 @@ fun DayRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = rowShape
-                )
                 .padding(end = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .size(40.dp)
+                    .padding(2.dp)
+                    .size(26.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surface,
                         shape = CircleShape
@@ -277,7 +280,10 @@ fun DayRow(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "$index")
+                Text(
+                    text = "$index",
+                    fontSize = settingsState.fontSize.sp
+                )
             }
 
             val morningData = state.value[index]?.get(DayPart.MORNING)
@@ -458,18 +464,16 @@ fun Cell(
 
 @Composable
 fun Dropdown(
+    modifier: Modifier = Modifier,
     options: List<String>,
     selected: String,
-    width: Int = 152,
-    height: Int = 56,
+    fontSize: Int = 12,
     onSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
-        modifier = Modifier
-            .width(width.dp)
-            .height(height.dp),
+        modifier = modifier,
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
@@ -478,7 +482,7 @@ fun Dropdown(
             onValueChange = {},
             readOnly = true,
             textStyle = TextStyle(
-                fontSize = 16.sp
+                fontSize = fontSize.sp
             ),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             modifier = Modifier.menuAnchor(),
